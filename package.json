@@ -1,0 +1,32 @@
+{
+  "name": "lavalink-musicbot",
+  "version": "1.0.0",
+  "description": "A example music bot with discord.js-lavalink",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlvvxL/lavalink-musicbot.git"
+  },
+  "keywords": [
+    "lavalink",
+    "music",
+    "musicbot",
+    "discord",
+    "discordbot",
+    "discordjs"
+  ],
+  "author": "Allvaa",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlvvxL/lavalink-musicbot/issues"
+  },
+  "homepage": "https://github.com/AlvvxL/lavalink-musicbot#readme",
+  "dependencies": {
+    "discord.js": "^11.4.2",
+    "discord.js-lavalink": "^2.2.2",
+    "node-superfetch": "^0.1.9"
+  }
+}
