@@ -41,6 +41,12 @@ client.on("message", async msg => {
         queue.delete(msg.guild.id)
         return msg.channel.send("Successfully left the voice channel");
     };
+    if (command === "skip") {
+        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (serverQueue.playing === false) serverQueue.playing = true;
+        serverQueue.player.stop();
+        return msg.channel.send("Song skipped");
+    };
     if (command === "nowplaying") {
         if (!serverQueue) return msg.channel.send("This server hasn't queue");
         if (serverQueue.playing === false) return msg.channel.send("Not playing anything because the queue is paused")
@@ -55,7 +61,7 @@ client.on("message", async msg => {
 ${serverQueue.songs.map(songs => `**${index++}.** ${songs.info.title}`).splice(0, 10).join("\n")}
 ${serverQueue.songs.length <= 10 ? "" : `And ${serverQueue.songs.length - 10} more..`}
 `);
-    }
+    };
     if (command === "pause") {
         if (!serverQueue) return msg.channel.send("This server hasn't queue");
         if (serverQueue.playing === false) return msg.channel.send("Queue already paused");
