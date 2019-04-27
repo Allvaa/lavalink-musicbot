@@ -1,2 +1,2 @@
 # lavalink-musicbot
-Just Example
+Example discord.js-lavalink client with queue system
