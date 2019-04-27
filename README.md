@@ -1,0 +1,2 @@
+# lavalink-musicbot
+Just Example
