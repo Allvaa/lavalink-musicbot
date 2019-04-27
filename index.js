@@ -31,7 +31,7 @@ client.on("message", async msg => {
 
         const track = args.join(" ");
         const song = await getSongs(`ytsearch: ${track}`);
-        if (!song) return msg.channel.send("No songs found. try again!");
+        if (!song[0]) return msg.channel.send("No songs found. try again!");
 
         return handleVideo(msg, msg.member.voiceChannel, song[0]);
     };
