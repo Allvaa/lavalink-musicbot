@@ -143,7 +143,7 @@ function play(guild, song) {
     if (!song) {
         serverQueue.textChannel.send("No more queue to play. The player has been stopped")
         client.player.leave(guild.id);
-        queue.delete(guild);
+        queue.delete(guild.id);
         return;
     } else {
         serverQueue.player.play(song.track)
