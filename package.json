@@ -1,7 +1,7 @@
 {
   "name": "lavalink-musicbot",
   "version": "1.0.0",
-  "description": "A example music bot with discord.js-lavalink",
+  "description": "An example Music Bot using Lavalink client and discord.js-lavalink.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,7 +16,7 @@
     "musicbot",
     "discord",
     "discordbot",
-    "discordjs"
+    "discord.js"
   ],
   "author": "Allvaa",
   "license": "MIT",
