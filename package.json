@@ -4,6 +4,7 @@
   "description": "An example Music Bot using Lavalink client and discord.js-lavalink module.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js"
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -25,7 +26,7 @@
   },
   "homepage": "https://github.com/AlvvxL/lavalink-musicbot#readme",
   "dependencies": {
-    "discord.js": "^11.4.2",
+    "discord.js": "^11.5.1",
     "discord.js-lavalink": "^2.2.2",
     "node-superfetch": "^0.1.9"
   }
