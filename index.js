@@ -1,6 +1,5 @@
 const config = require("./config.json");
 const request = require("node-superfetch");
-const { URLSearchParams } = require("url");
 const { Client, Collection } = require("discord.js");
 const { PlayerManager } = require("discord.js-lavalink");
 
@@ -10,9 +9,8 @@ const queue = new Collection();
 client.on("ready", () => {
     client.player = new PlayerManager(client, config.nodes, {
         user: client.user.id,
-        shards: 0
-      });
-
+        shards: client.shard ? client.shard.count : 0
+    });
     console.log("Bot is online!");
 });
 
@@ -36,25 +34,25 @@ client.on("message", async msg => {
         return handleVideo(msg, msg.member.voiceChannel, song[0]);
     };
     if (command === "leave") {
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         client.player.leave(msg.guild.id);
         queue.delete(msg.guild.id)
         return msg.channel.send("Successfully left the voice channel");
     };
     if (command === "skip") {
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         if (serverQueue.playing === false) serverQueue.playing = true;
         serverQueue.player.stop();
         return msg.channel.send("Song skipped");
     };
     if (command === "nowplaying") {
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         if (serverQueue.playing === false) return msg.channel.send("Not playing anything because the queue is paused")
         return msg.channel.send(`Now playing: **${serverQueue.songs[0].info.title}** by *${serverQueue.songs[0].info.author}*`);
     };
     if (command === "queue") {
         let index = 1;
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         return msg.channel.send(`
 **Current Queue**
 
@@ -63,27 +61,39 @@ ${serverQueue.songs.length <= 10 ? "" : `And ${serverQueue.songs.length - 10} mo
 `);
     };
     if (command === "pause") {
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         if (serverQueue.playing === false) return msg.channel.send("Queue already paused");
         const player = client.player.get(msg.guild.id);
-        if (!player) return msg.channel.send("No lavalink player found");
+        if (!player) return msg.channel.send("No Lavalink player found");
         player.pause(true);
         serverQueue.playing = false;
         return msg.channel.send("Paused the music");
     };
     if (command === "resume") {
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         if (serverQueue.playing === true) return msg.channel.send("Queue is being played");
         const player = client.player.get(msg.guild.id);
-        if (!player) return msg.channel.send("No lavalink player found");
+        if (!player) return msg.channel.send("No Lavalink player found");
         player.pause(false);
         serverQueue.playing = true;
         return msg.channel.send("Resumed the music");
     };
     if (command === "loop") {
-        if (!serverQueue) return msg.channel.send("This server hasn't queue");
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
         serverQueue.loop = !serverQueue.loop;
         return msg.channel.send(`Loop has been ${serverQueue.loop ? "enabled" : "disabled"}`);
+    };
+    if (command === "volume") {
+        if (!serverQueue) return msg.channel.send("This server doesn't have a queue");
+        if (!args[0]) {
+            return msg.channel.send(`The current volume is **${serverQueue.volume}%**.`);
+        } else {
+            let value = args[0];
+            if (isNaN(value)) return msg.channel.send("The value must be a number!");
+            value = parseInt(value);
+            serverQueue.volume = value;
+            return msg.channel.send(`Successfully set the volume to **${value}%**.`);
+        };
     };
 });
 
@@ -148,7 +158,7 @@ function play(guild, song) {
     } else {
         serverQueue.player.play(song.track)
             .once("error", console.error)
-            .once("end", async data => {
+            .once("end", data => {
                 if (data.reason === "REPLACED") return;
                 console.log("Song has ended...");
 
