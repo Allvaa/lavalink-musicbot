@@ -27,7 +27,7 @@
   "homepage": "https://github.com/AlvvxL/lavalink-musicbot#readme",
   "dependencies": {
     "discord.js": "^11.5.1",
-    "discord.js-lavalink": "^2.2.2",
+    "discord.js-lavalink": "^2.2.3",
     "node-superfetch": "^0.1.9"
   }
 }
