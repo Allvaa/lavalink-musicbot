@@ -1,7 +1,7 @@
 {
   "name": "lavalink-musicbot",
-  "version": "1.0.0",
-  "description": "An example Music Bot using Lavalink client and discord.js-lavalink module.",
+  "version": "2.0.0",
+  "description": "Music bot that used Lavalink for the audio",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
