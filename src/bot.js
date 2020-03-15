@@ -25,40 +25,13 @@ class MusicClient extends Client {
             const args = message.content.slice(this.config.prefix.length).trim().split(/ +/g);
             const command = args.shift().toLowerCase();
 
-            if (command === "play") {
-                if (!message.member.voice.channel) return message.channel.send("You must join a voice channel to use this command.");
-
-                const track = args.join(" ");
-                const song = await this.musicManager.getSongs(`ytsearch: ${track}`);
-                if (!song[0]) return message.channel.send("Couldn't find any songs.");
-
-                this.musicManager.handleVideo(message, message.member.voice.channel, song[0]);
-            }
-            
-            if (command === "eval") {
-                if (message.author.id !== this.config.owner) return;
-                if (args.join(" ").startsWith("exec") || args.join(" ").startsWith("--exec") || args.join(" ").startsWith("-ex")) {
-                    const { exec } = require("child_process");
-                    exec(args.slice(1).join(" "), (err, stdout, stderr) => {
-                        try {
-                            if (err) message.channel.send(`\`\`\`bash\n${err}\`\`\``);
-                            if (stdout) message.channel.send(`\`\`\`bash\n${stdout}\`\`\``);
-                            if (stderr) message.channel.send(`\`\`\`bash\n${stderr}\`\`\``);
-                        } catch (e) {
-                            return message.channel.send(`\`\`\`\n${e.message}\`\`\``);
-                        }
-                    });
-                } else {
-                    try {
-                        let evaled = eval(args.join(" "));
-                        if (typeof evaled !== "string") {
-                            evaled = require("util").inspect(evaled, { depth: 0 });
-                        }
-                        message.channel.send(`\`\`\`js\n${evaled}\`\`\``);
-                    } catch (e) {
-                        return message.channel.send(`\`\`\`js\n${e.message}\`\`\``);
-                    }
-                }
+            try {
+                const cmd = require(`./commands/${command}`);
+                if (!cmd) return;
+                await cmd.run(this, message, args);
+            } catch (e) {
+                if (e.message.startsWith("Cannot find module")) return;
+                console.error(e.stack);
             }
         });
     }
