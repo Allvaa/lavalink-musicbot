@@ -1,4 +1,4 @@
-const config = require("./config.json");
+/*const config = require("./config.json");
 const request = require("node-superfetch");
 const { Client, Collection } = require("discord.js");
 const { PlayerManager } = require("discord.js-lavalink");
@@ -149,7 +149,7 @@ async function handleVideo(msg, voiceChannel, song) {
 };
 
 function play(guild, song) {
-    let serverQueue = queue.get(guild.id);
+    const serverQueue = queue.get(guild.id);
     if (!song) {
         serverQueue.textChannel.send("No more queue to play. The player has been stopped")
         client.player.leave(guild.id);
@@ -175,3 +175,5 @@ function play(guild, song) {
 
 
 client.login(config.token);
+*/
+require("./src/bot");
