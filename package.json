@@ -1,7 +1,7 @@
 {
   "name": "lavalink-musicbot",
-  "version": "1.0.0",
-  "description": "An example Music Bot using Lavalink client and discord.js-lavalink module.",
+  "version": "2.0.0",
+  "description": "Music bot that used Lavalink for the audio",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
@@ -25,9 +25,12 @@
     "url": "https://github.com/AlvvxL/lavalink-musicbot/issues"
   },
   "homepage": "https://github.com/AlvvxL/lavalink-musicbot#readme",
+  "optionalDependencies": {
+    "eslint": "^6.8.0"
+  },
   "dependencies": {
-    "discord.js": "^11.5.1",
-    "discord.js-lavalink": "^2.2.3",
-    "node-superfetch": "^0.1.9"
+    "discord.js": "^12.0.2",
+    "discord.js-lavalink": "^3.0.0",
+    "node-superfetch": "^0.1.10"
   }
 }

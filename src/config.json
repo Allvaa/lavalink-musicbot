@@ -1,0 +1,8 @@
+{ 
+    "token": "Your bot token here.",
+    "prefix": "Insert a prefix like '!' or anything.",
+    "nodes": [
+        { "host": "localhost", "port": 2333, "password": "youshallnotpass" }
+    ],
+    "owner": "your discord id"
+}
