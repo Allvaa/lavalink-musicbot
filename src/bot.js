@@ -21,7 +21,6 @@ class MusicClient extends Client {
         .on("message", async message => {
             if (message.author.bot || !message.guild) return;
             if (!message.content.startsWith(this.config.prefix)) return;
-            const serverQueue = this.musicManager.queue.get(message.guild.id);
             const args = message.content.slice(this.config.prefix.length).trim().split(/ +/g);
             const command = args.shift().toLowerCase();
 
