@@ -6,11 +6,9 @@ module.exports = {
         if (!args[0]) {
             message.channel.send(`Current volume: **${serverQueue.volume}%**.`);
         } else {
-            let value = args[0];
+            const value = args[0];
             if (isNaN(value)) return message.channel.send("Make sure the value is a number.");
-            value = parseInt(value);
-            serverQueue.volume = value;
-            serverQueue.player.volume(value);
+            serverQueue.setVolume(value);
             message.channel.send(`New volume: **${value}%**.`);
         }
     }

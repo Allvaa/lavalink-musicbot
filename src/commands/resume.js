@@ -4,8 +4,7 @@ module.exports = {
         const serverQueue = client.musicManager.queue.get(message.guild.id);
         if (!serverQueue) return message.channel.send("Queue is empty!");
         if (serverQueue.playing) return message.channel.send("Queue is being played");
-        serverQueue.player.pause(false);
-        serverQueue.playing = true;
+        serverQueue.resume();
         message.channel.send("Resumed!");
     }
 };
