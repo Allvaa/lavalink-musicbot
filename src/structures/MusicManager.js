@@ -1,5 +1,6 @@
 const { Collection } = require("discord.js");
 const { PlayerManager } = require("discord.js-lavalink");
+const Queue = require("./Queue");
 
 class MusicManager {
     /**
@@ -18,25 +19,22 @@ class MusicManager {
         const serverQueue = this.queue.get(message.guild.id);
         song.requestedBy = message.author;
         if (!serverQueue) {
-            const queueConstruct = {
+            const queue = new Queue(this.client, {
                 textChannel: message.channel,
-                voiceChannel,
-                player: null,
-                songs: [song],
-                volume: 100,
-                playing: true,
-                loop: false
-            };
-            this.queue.set(message.guild.id, queueConstruct);
+                voiceChannel
+            });
+            queue.songs.push(song);
+            this.queue.set(message.guild.id, queue);
 
             try {
-                queueConstruct.player = this.manager.join({
+                const player = this.manager.join({
                     channel: voiceChannel.id,
                     guild: message.guild.id,
                     host: this.manager.nodes.first().host
                 }, {
                     selfdeaf: true
                 });
+                queue.setPlayer(player);
                 this.play(message.guild, song);
             } catch (error) {
                 console.error(`I could not join the voice channel: ${error}`);
