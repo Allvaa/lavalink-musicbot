@@ -7,7 +7,7 @@ class MusicManager {
      */
     constructor(client) {
         this.client = client;
-        this.player = new PlayerManager(client, client.config.nodes,  {
+        this.manager = new PlayerManager(client, client.config.nodes,  {
             user: client.user.id,
             shards: client.shard ? client.shard.count : 0
         });
@@ -30,10 +30,10 @@ class MusicManager {
             this.queue.set(message.guild.id, queueConstruct);
 
             try {
-                queueConstruct.player = this.player.join({
+                queueConstruct.player = this.manager.join({
                     channel: voiceChannel.id,
                     guild: message.guild.id,
-                    host: this.player.nodes.first().host
+                    host: this.manager.nodes.first().host
                 }, {
                     selfdeaf: true
                 });
@@ -41,7 +41,7 @@ class MusicManager {
             } catch (error) {
                 console.error(`I could not join the voice channel: ${error}`);
                 this.queue.delete(message.guild.id);
-                this.player.leave(message.guild.id);
+                this.manager.leave(message.guild.id);
                 message.channel.send(`I could not join the voice channel: ${error.message}`);
             }
         } else {
@@ -54,7 +54,7 @@ class MusicManager {
         const serverQueue = this.queue.get(guild.id);
         if (!song) {
             serverQueue.textChannel.send("Queue is empty! Leaving voice channel..");
-            this.player.leave(guild.id);
+            this.manager.leave(guild.id);
             this.queue.delete(guild.id);
         } else {
             serverQueue.player.play(song.track);
@@ -74,7 +74,7 @@ class MusicManager {
     }
 
     async getSongs(query) {
-        const node = this.player.nodes.first();
+        const node = this.manager.nodes.first();
         const params = new URLSearchParams();
         params.append("identifier", query);
 
