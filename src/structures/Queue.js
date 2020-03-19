@@ -54,7 +54,6 @@ class Queue {
     async destroy() {
         this.client.musicManager.queue.delete(this.textChannel.guild.id);
         await this.client.musicManager.manager.leave(this.textChannel.guild.id);
-        return true;
     }
 }
 
