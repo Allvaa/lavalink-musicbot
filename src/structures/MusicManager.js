@@ -2,9 +2,12 @@ const { Collection } = require("discord.js");
 const { PlayerManager } = require("discord.js-lavalink");
 const Queue = require("./Queue");
 
+/**
+ * @class MusicManager
+ */
 class MusicManager {
     /**
-     * @param {import("../bot").client} client
+     * @param {import("./MusicClient")} client
      */
     constructor(client) {
         this.client = client;

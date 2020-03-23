@@ -3,7 +3,7 @@
  */
 class Queue {
     /**
-     * @param {import("../bot").client} client
+     * @param {import("./MusicClient")} client
      * @param {Object} data
      * @param {import("discord.js").TextChannel} data.textChannel
      * @param {import("discord.js").VoiceChannel} data.voiceChannel
@@ -54,7 +54,6 @@ class Queue {
     async destroy() {
         this.client.musicManager.queue.delete(this.textChannel.guild.id);
         await this.client.musicManager.manager.leave(this.textChannel.guild.id);
-        return true;
     }
 }
 
