@@ -75,7 +75,7 @@ class MusicManager {
     }
 
     async getSongs(query) {
-        const node = this.manager.nodes.first();
+        const node = this.manager.nodes.get("default");
         const params = new URLSearchParams();
         params.append("identifier", query);
 
