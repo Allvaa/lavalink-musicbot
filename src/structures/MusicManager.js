@@ -1,5 +1,5 @@
 const { Collection } = require("discord.js");
-const { PlayerManager } = require("discord.js-lavalink");
+const { Manager } = require("lavacord");
 const Queue = require("./Queue");
 
 /**
@@ -11,7 +11,7 @@ class MusicManager {
      */
     constructor(client) {
         this.client = client;
-        this.manager = new PlayerManager(client, client.config.nodes,  {
+        this.manager = new Manager(client, client.config.nodes,  {
             user: client.user.id,
             shards: client.shard ? client.shard.count : 0
         });

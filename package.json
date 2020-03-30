@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "discord.js": "^12.0.2",
-    "discord.js-lavalink": "^3.0.0",
+    "lavacord": "^1.1.5",
     "node-superfetch": "^0.1.10"
   },
   "engines": {

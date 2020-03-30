@@ -20,7 +20,7 @@ class Queue {
     }
 
     /**
-     * @param {import("discord.js-lavalink").Player} player
+     * @param {import("lavacord").Player} player
      */
     setPlayer(player) {
         this.player = player;
