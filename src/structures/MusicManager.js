@@ -13,8 +13,10 @@ class MusicManager {
         this.client = client;
         this.manager = new Manager(client, client.config.nodes,  {
             user: client.user.id,
-            shards: client.shard ? client.shard.count : 0
+            shards: client.shard ? client.shard.count : 1
         });
+        this.manager.connect();
+        
         this.queue = new Collection();
     }
 
