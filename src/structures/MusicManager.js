@@ -1,5 +1,5 @@
 const { Collection } = require("discord.js");
-const { Manager } = require("lavacord");
+const { Manager } = require("@lavacord/discord.js");
 const Queue = require("./Queue");
 
 /**
@@ -11,14 +11,14 @@ class MusicManager {
      */
     constructor(client) {
         this.client = client;
-        this.manager = new Manager(client.config.nodes,  {
+        this.manager = new Manager(client, client.config.nodes,  {
             user: client.user.id,
             shards: client.shard ? client.shard.count : 0
         });
         this.queue = new Collection();
     }
 
-    handleVideo(message, voiceChannel, song) {
+    async handleVideo(message, voiceChannel, song) {
         const serverQueue = this.queue.get(message.guild.id);
         song.requestedBy = message.author;
         if (!serverQueue) {
@@ -30,10 +30,10 @@ class MusicManager {
             this.queue.set(message.guild.id, queue);
 
             try {
-                const player = this.manager.join({
+                const player = await this.manager.join({
                     channel: voiceChannel.id,
                     guild: message.guild.id,
-                    host: this.manager.nodes.first().host
+                    node: "default"
                 }, {
                     selfdeaf: true
                 });
