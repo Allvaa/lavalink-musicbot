@@ -12,7 +12,6 @@ class MusicClient extends Client {
     constructor(opt) {
         super(opt);
         this.config = require("../config.json");
-        this.request = require("node-superfetch");
         this.musicManager = null;
 
         this.login(this.config.token);

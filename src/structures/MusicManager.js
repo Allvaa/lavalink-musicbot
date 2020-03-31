@@ -1,5 +1,6 @@
 const { Collection } = require("discord.js");
 const { Manager } = require("@lavacord/discord.js");
+const { Rest } = require("lavacord");
 const Queue = require("./Queue");
 
 /**
@@ -78,17 +79,8 @@ class MusicManager {
 
     async getSongs(query) {
         const node = this.manager.nodes.get("default");
-        const params = new URLSearchParams();
-        params.append("identifier", query);
-
-        let result;
-        try {
-            result = await this.client.request.get(`http://${node.host}:${node.port}/loadtracks?${params.toString()}`)
-                .set('Authorization', node.password);
-        } catch (e) {
-            throw Error(e);
-        }
-        return result.body.tracks;
+        const result = await Rest.load(node, query);
+        return result.tracks;
     }
 }
 
