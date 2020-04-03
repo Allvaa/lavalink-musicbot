@@ -1,5 +1,6 @@
 const { Collection } = require("discord.js");
-const { PlayerManager } = require("discord.js-lavalink");
+const { Manager } = require("@lavacord/discord.js");
+const { Rest } = require("lavacord");
 const Queue = require("./Queue");
 
 /**
@@ -11,14 +12,16 @@ class MusicManager {
      */
     constructor(client) {
         this.client = client;
-        this.manager = new PlayerManager(client, client.config.nodes,  {
+        this.manager = new Manager(client, client.config.nodes,  {
             user: client.user.id,
-            shards: client.shard ? client.shard.count : 0
+            shards: client.shard ? client.shard.count : 1
         });
+        this.manager.connect();
+        
         this.queue = new Collection();
     }
 
-    handleVideo(message, voiceChannel, song) {
+    async handleVideo(message, voiceChannel, song) {
         const serverQueue = this.queue.get(message.guild.id);
         song.requestedBy = message.author;
         if (!serverQueue) {
@@ -30,10 +33,10 @@ class MusicManager {
             this.queue.set(message.guild.id, queue);
 
             try {
-                const player = this.manager.join({
+                const player = await this.manager.join({
                     channel: voiceChannel.id,
                     guild: message.guild.id,
-                    host: this.manager.nodes.first().host
+                    node: "default"
                 }, {
                     selfdeaf: true
                 });
@@ -75,18 +78,9 @@ class MusicManager {
     }
 
     async getSongs(query) {
-        const node = this.manager.nodes.first();
-        const params = new URLSearchParams();
-        params.append("identifier", query);
-
-        let result;
-        try {
-            result = await this.client.request.get(`http://${node.host}:${node.port}/loadtracks?${params.toString()}`)
-                .set('Authorization', node.password);
-        } catch (e) {
-            throw Error(e);
-        }
-        return result.body.tracks;
+        const node = this.manager.nodes.get("default");
+        const result = await Rest.load(node, query);
+        return result.tracks;
     }
 }
 
