@@ -29,9 +29,9 @@
     "eslint": "^6.8.0"
   },
   "dependencies": {
-    "@lavacord/discord.js": "0.0.2",
-    "discord.js": "^12.0.2",
-    "lavacord": "^1.1.5"
+    "@lavacord/discord.js": "0.0.5",
+    "discord.js": "^12.1.1",
+    "lavacord": "^1.1.7"
   },
   "engines": {
     "node": "12.x"
