@@ -31,7 +31,7 @@
   "dependencies": {
     "@lavacord/discord.js": "0.0.6",
     "discord.js": "^12.2.0",
-    "lavacord": "^1.1.7"
+    "lavacord": "^1.1.9"
   },
   "engines": {
     "node": "12.x"
