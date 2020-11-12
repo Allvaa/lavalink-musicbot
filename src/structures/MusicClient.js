@@ -1,42 +1,45 @@
-const { Client } = require("discord.js");
-const MusicManager = require("./MusicManager");
+const { Manager } = require("@lavacord/discord.js");
+const { Client, Collection } = require("discord.js");
+const { readdir } = require("fs/promises");
+const { join } = require("path");
 
-/**
- * @class MusicClient
- * @extends {Client}
- */
-class MusicClient extends Client {
-    /**
-     * @param {import("discord.js").ClientOptions} [opt]
-     */
+module.exports = class MusicClient extends Client {
+    /** @param {import("discord.js").ClientOptions} [opt] */
     constructor(opt) {
         super(opt);
-        this.config = require("../config.json");
-        this.musicManager = null;
-
-        this.login(this.config.token);
-
-        this
-        .on("ready", () => {
-            this.musicManager = new MusicManager(this);
-            console.log("Bot is online!");
-        })
-        .on("message", async message => {
-            if (message.author.bot || !message.guild) return;
-            if (!message.content.startsWith(this.config.prefix)) return;
-            const args = message.content.slice(this.config.prefix.length).trim().split(/ +/g);
-            const command = args.shift().toLowerCase();
-
-            try {
-                const cmd = require(`../commands/${command}`);
-                if (!cmd) return;
-                await cmd.run(this, message, args);
-            } catch (e) {
-                if (e.message.startsWith("Cannot find module")) return;
-                console.error(e.stack);
+        this.commands = new Collection();
+        this.manager = new Manager(this, [
+            {
+                id: "1",
+                host: process.env.LAVA_HOST,
+                port: process.env.LAVA_PORT,
+                password: process.env.LAVA_PASS
             }
-        });
+        ]);
+        this.prefix = process.env.PREFIX;
     }
-}
 
-module.exports = MusicClient;
+    build() {
+        this.loadCommands();
+        this.loadEventListeners();
+        this.login(process.env.TOKEN);
+    }
+
+    /** @private */
+    async loadCommands() {
+        const commands = await readdir(join(__dirname, "..", "commands"));
+        for (const commandFile of commands) {
+            const command = require(`../commands/${commandFile}`);
+            this.commands.set(command.name, command);
+        }
+    }
+
+    /** @private */
+    async loadEventListeners() {
+        const listeners = await readdir(join(__dirname, "..", "listeners"));
+        for (const listenerFile of listeners) {
+            const listener = require(`../listeners/${listenerFile}`);
+            this.on(listener.name, (...args) => listener.exec(this, ...args));
+        }
+    }
+};
