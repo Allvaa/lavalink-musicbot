@@ -1,5 +1,7 @@
 const util = require("../util");
 
+const durationPattern = /^[0-5]?[0-9](:[0-5][0-9]+)$/;
+
 module.exports = {
     name: "seek",
     exec: async (msg, args) => {
@@ -10,7 +12,7 @@ module.exports = {
             return msg.channel.send(`You must be on ${msg.guild.me.voice.channel} to use this command.`);
 
         const duration = args[0];
-        if (!/^[0-5]?[0-9]((:[0-5][0-9])+)$/.test(duration))
+        if (!durationPattern.test(duration))
             return msg.channel.send("Your inputted duration isn't valid. Valid duration eg. `1:34`.");
 
         const durationMs = util.durationToMillis(duration);
