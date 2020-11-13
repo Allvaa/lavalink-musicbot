@@ -48,7 +48,7 @@ module.exports = class MusicHandler {
         await this.client.manager.join({
             channel: voice.id,
             guild: this.guild.id,
-            node: "main"
+            node: this.node.id
         }, { selfdeaf: true });
         this.channel.voice = voice;
 
