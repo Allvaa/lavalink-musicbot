@@ -2,13 +2,13 @@ module.exports = {
     name: "play",
     aliases: ["p"],
     exec: async (msg, args) => {
+        const { music } = msg.guild;
         if (!msg.member.voice.channel)
             return msg.channel.send("You must be on a voice channel.");
         if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
             return msg.channel.send(`You must be on ${msg.guild.me.voice.channel} to use this command.`);
 
         const query = args.join(" ");
-        const { music } = msg.guild;
         try {
             const { loadType, playlistInfo: { name }, tracks } = await music.load(isURL(query) ? query : `ytsearch:${query}`);
             if (!tracks.length) return msg.channel.send("Couldn't find any results.");
@@ -28,7 +28,7 @@ module.exports = {
             
             if (!music.player) {
                 await music.join(msg.member.voice.channel);
-                music.start();
+                await music.start();
             }
 
             music.setTextCh(msg.channel);

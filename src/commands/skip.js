@@ -1,6 +1,5 @@
 module.exports = {
-    name: "stop",
-    aliases: ["leave", "dc"],
+    name: "skip",
     exec: async (msg) => {
         const { music } = msg.guild;
         if (!music.player) return msg.channel.send("Currently not playing anything.");
@@ -10,8 +9,8 @@ module.exports = {
             return msg.channel.send(`You must be on ${msg.guild.me.voice.channel} to use this command.`);
 
         try {
-            await music.stop();
-            msg.react("⏹️").catch(e => e);
+            await music.skip();
+            msg.react("⏭️").catch(e => e);
         } catch (e) {
             msg.channel.send(`An error occured: ${e.message}`);
         }
