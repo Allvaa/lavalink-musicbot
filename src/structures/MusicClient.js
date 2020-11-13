@@ -3,6 +3,8 @@ const { Client, Collection } = require("discord.js");
 const { readdir } = require("fs/promises");
 const { join } = require("path");
 
+require("../extensions");
+
 module.exports = class MusicClient extends Client {
     /** @param {import("discord.js").ClientOptions} [opt] */
     constructor(opt) {
