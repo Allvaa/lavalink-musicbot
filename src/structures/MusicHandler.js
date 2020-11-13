@@ -112,7 +112,7 @@ module.exports = class MusicHandler {
 
     async setVolume(newVol) {
         if (!this.player) return;
-        this.volume = newVol;
         await this.player.volume(newVol);
+        this.volume = newVol;
     }
 };
