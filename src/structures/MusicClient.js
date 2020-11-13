@@ -10,7 +10,7 @@ module.exports = class MusicClient extends Client {
         this.commands = new Collection();
         this.manager = new Manager(this, [
             {
-                id: "1",
+                id: "main",
                 host: process.env.LAVA_HOST,
                 port: process.env.LAVA_PORT,
                 password: process.env.LAVA_PASS
