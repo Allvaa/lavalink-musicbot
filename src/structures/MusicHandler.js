@@ -83,36 +83,36 @@ module.exports = class MusicHandler {
         return res;
     }
 
-    start() {
+    async start() {
         if (!this.player) return;
-        this.player.play(this.queue[0].track);
+        await this.player.play(this.queue[0].track);
     }
 
-    pause() {
+    async pause() {
         if (!this.player) return;
-        if (!this.player.paused) this.player.pause(true);
+        if (!this.player.paused) await this.player.pause(true);
     }
 
-    resume() {
+    async resume() {
         if (!this.player) return;
-        if (this.player.paused) this.player.pause(false);
+        if (this.player.paused) await this.player.pause(false);
     }
 
-    skip() {
+    async skip() {
         if (!this.player) return;
-        this.player.stop();
+        await this.player.stop();
     }
 
-    stop() {
+    async stop() {
         if (!this.player) return;
         this.loop = false;
         this.queue = [];
-        this.skip();
+        await this.skip();
     }
 
-    setVolume(newVol) {
+    async setVolume(newVol) {
         if (!this.player) return;
         this.volume = newVol;
-        this.player.volume(newVol);
+        await this.player.volume(newVol);
     }
 };
