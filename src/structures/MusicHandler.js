@@ -55,6 +55,7 @@ module.exports = class MusicHandler {
         this.player
             .on("start", () => {
                 this.current = this.queue.shift();
+                if (this.channel.text) this.channel.text.send(`Now playing: **${this.current.info.title}**`);
             })
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
@@ -68,7 +69,8 @@ module.exports = class MusicHandler {
                     return;
                 }
                 this.start();
-            });
+            })
+            .on("error", console.error);
     }
 
     /** @param {import("discord.js").TextChannel} text */
