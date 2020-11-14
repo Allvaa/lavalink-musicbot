@@ -20,7 +20,8 @@
     "@lavacord/discord.js": "0.0.7",
     "discord.js": "^12.4.1",
     "dotenv": "^8.2.0",
-    "lavacord": "^1.1.9"
+    "lavacord": "^1.1.9",
+    "pretty-ms": "^7.0.1"
   },
   "devDependencies": {
     "eslint": "^7.13.0"
