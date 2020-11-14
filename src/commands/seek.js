@@ -12,7 +12,12 @@ module.exports = {
         if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
 
+        if (!music.current.info.isSeekable)
+            return msg.channel.send(util.embed().setDescription("❌ | Current track isn't seekable."));
+
         const duration = args[0];
+        if (!duration)
+            return msg.channel.send(util.embed().setDescription("❌ | You must provide duration to seek. Valid duration e.g. `1:34`."));
         if (!durationPattern.test(duration))
             return msg.channel.send(util.embed().setDescription("❌ | You provided an invalid duration. Valid duration e.g. `1:34`."));
 
