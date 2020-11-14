@@ -16,10 +16,9 @@ module.exports = {
         
         const embed = util.embed()
             .setAuthor(`${msg.guild.name} music queue.`, msg.guild.iconURL({ dynamic: true }))
-            .setDescription(chunked[0].join("\n"));
-        
-        if (chunked.length > 1) embed.setFooter(`Page 1 of ${chunked.length}`);
-        
+            .setDescription(chunked[0].join("\n"))
+            .setFooter(`Page 1 of ${chunked.length}.`);
+                
         try {
             const queueMsg = await msg.channel.send(embed);
 
@@ -53,7 +52,7 @@ module.exports = {
 
                     const embed = queueMsg.embeds[0]
                         .setDescription(chunked[currPage].join("\n"))
-                        .setFooter(`Page ${currPage + 1} of ${chunked.length}`);
+                        .setFooter(`Page ${currPage + 1} of ${chunked.length}.`);
 
                     queueMsg.edit(embed);
 

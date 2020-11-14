@@ -18,7 +18,7 @@ module.exports = {
             if (isSilent) return;
             let inspectedResult = inspect(result, { depth: 0 });
             if (isResultPromise) inspectedResult = `Promise<${inspectedResult}>`;
-            msg.channel.send(`${isURL(inspectedResult) ? inspectedResult : `\`\`\`js\n${inspectedResult}\`\`\``}`);
+            await msg.channel.send(`${isURL(inspectedResult) ? inspectedResult : `\`\`\`js\n${inspectedResult}\`\`\``}`);
         } catch (e) {
             msg.channel.send(`\`\`\`js\n${e}\`\`\``);
         }
