@@ -1,4 +1,5 @@
 const { Rest } = require("lavacord");
+const util = require("../util");
 
 module.exports = class MusicHandler {
     /** @param {import("discord.js").Guild} guild */
@@ -51,7 +52,7 @@ module.exports = class MusicHandler {
         this.player
             .on("start", () => {
                 this.current = this.queue.shift();
-                if (this.textChannel) this.textChannel.send(`Now playing: **${this.current.info.title}**`);
+                if (this.textChannel) this.textChannel.send(util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`));
             })
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
@@ -60,7 +61,7 @@ module.exports = class MusicHandler {
                 if (this.loop) this.queue.push(this.previous);
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
-                    if (this.textChannel) this.textChannel.send("Queue is empty! Leaving voice channel..");
+                    if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
                     this.reset();
                     return;
                 }
