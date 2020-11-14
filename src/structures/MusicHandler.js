@@ -109,7 +109,9 @@ module.exports = class MusicHandler {
 
     async setVolume(newVol) {
         if (!this.player) return;
-        await this.player.volume(newVol);
+        const parsed = parseInt(newVol, 10);
+        if (isNaN(parsed)) return;
+        await this.player.volume(parsed);
         this.volume = newVol;
     }
 };
