@@ -11,5 +11,12 @@ module.exports = {
     },
     millisToDuration: (ms) => {
         return prettyMilliseconds(ms, { colonNotation: true, secondsDecimalDigits: 0 });
+    },
+    chunk: (arr, size) => {
+        const temp = [];
+        for (let i = 0; i < arr.length; i += size) {
+            temp.push(arr.slice(i, i + size));
+        }
+        return temp;
     }
 };
