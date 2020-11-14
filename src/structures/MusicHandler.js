@@ -9,12 +9,12 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
-        this.channel = {
-            /** @type {import("discord.js").TextChannel|null} */
-            text: null,
-            /** @type {import("discord.js").VoiceChannel|null} */
-            voice: null
-        };
+        /** @type {import("discord.js").TextChannel|null} */
+        this.textChannel = null;
+    }
+
+    get voiceChannel() {
+        return this.guild.me.voice.channel;
     }
 
     /** @returns {import("../structures/MusicClient")} */
@@ -36,10 +36,7 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
-        this.channel = {
-            voice: null,
-            text: null
-        };
+        this.textChannel = null;
     }
 
     /** @param {import("discord.js").VoiceChannel} voice */
@@ -50,12 +47,11 @@ module.exports = class MusicHandler {
             guild: this.guild.id,
             node: this.node.id
         }, { selfdeaf: true });
-        this.channel.voice = voice;
 
         this.player
             .on("start", () => {
                 this.current = this.queue.shift();
-                if (this.channel.text) this.channel.text.send(`Now playing: **${this.current.info.title}**`);
+                if (this.textChannel) this.textChannel.send(`Now playing: **${this.current.info.title}**`);
             })
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
@@ -64,7 +60,7 @@ module.exports = class MusicHandler {
                 if (this.loop) this.queue.push(this.previous);
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
-                    if (this.channel.text) this.channel.text.send("Queue is empty! Leaving voice channel..");
+                    if (this.textChannel) this.textChannel.send("Queue is empty! Leaving voice channel..");
                     this.reset();
                     return;
                 }
@@ -75,7 +71,7 @@ module.exports = class MusicHandler {
 
     /** @param {import("discord.js").TextChannel} text */
     setTextCh(text) {
-        this.channel.text = text;
+        this.textChannel = text;
     }
 
     async load(query) {
