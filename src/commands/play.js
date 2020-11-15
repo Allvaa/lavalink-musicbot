@@ -1,12 +1,54 @@
+const util = require("../util");
+
 module.exports = {
     name: "play",
-    run: async (client, message, args) => {
-        if (!message.member.voice.channel) return message.channel.send("You must join a voice channel to use this command.");
+    aliases: ["p"],
+    exec: async (msg, args) => {
+        const { music } = msg.guild;
+        if (!msg.member.voice.channel)
+            return msg.channel.send(util.embed().setDescription("❌ | You must be on a voice channel."));
+        if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
+            return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
 
-        const track = args.join(" ");
-        const song = await client.musicManager.getSongs(`ytsearch: ${track}`);
-        if (!song[0]) return message.channel.send("Couldn't find any songs.");
+        if (!music.node || !music.node.connected)
+            return msg.channel.send(util.embed().setDescription(`❌ | Lavalink node not connected.`));
 
-        client.musicManager.handleVideo(message, message.member.voice.channel, song[0]);
+        const query = args.join(" ");
+        try {
+            const { loadType, playlistInfo: { name }, tracks } = await music.load(isURL(query) ? query : `ytsearch:${query}`);
+            if (!tracks.length) return msg.channel.send(util.embed().setDescription("❌ | Couldn't find any results."));
+            
+            if (loadType === "PLAYLIST_LOADED") {
+                for (const track of tracks) {
+                    track.requester = msg.author;
+                    music.queue.push(track);
+                }
+                msg.channel.send(util.embed().setDescription(`✅ | Loaded \`${tracks.length}\` tracks from **${name}**.`));
+            } else {
+                const track = tracks[0];
+                track.requester = msg.author;
+                music.queue.push(track);
+                if (music.player) msg.channel.send(util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`));
+            }
+            
+            if (!music.player) {
+                await music.join(msg.member.voice.channel);
+                await music.start();
+            }
+
+            music.setTextCh(msg.channel);
+        } catch (e) {
+            msg.channel.send(`An error occured: ${e.message}.`);
+        }
     }
 };
+
+function isURL(url) {
+    try {
+        new URL(url);
+        return true;
+    }
+    catch {
+        return false;
+    }
+}

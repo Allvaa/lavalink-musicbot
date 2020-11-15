@@ -1,10 +1,20 @@
+const util = require("../util");
+
 module.exports = {
     name: "resume",
-    run: async (client, message, args) => {
-        const serverQueue = client.musicManager.queue.get(message.guild.id);
-        if (!serverQueue) return message.channel.send("Queue is empty!");
-        if (serverQueue.playing) return message.channel.send("Queue is being played");
-        serverQueue.resume();
-        message.channel.send("Resumed!");
+    exec: async (msg) => {
+        const { music } = msg.guild;
+        if (!music.player || !music.player.playing) return msg.channel.send(util.embed().setDescription("❌|  Currently not playing anything."));
+        if (!msg.member.voice.channel)
+            return msg.channel.send(util.embed().setDescription("❌ | You must be on a voice channel."));
+        if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
+            return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
+
+        try {
+            await music.resume();
+            msg.react("▶️").catch(e => e);
+        } catch (e) {
+            msg.channel.send(`An error occured: ${e.message}.`);
+        }
     }
 };

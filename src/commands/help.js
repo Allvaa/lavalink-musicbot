@@ -1,13 +1,20 @@
-const { MessageEmbed } = require("discord.js");
+const util = require("../util");
+
+const unlisted = ["eval", "source"];
 
 module.exports = {
     name: "help",
-    run: async (client, message, args) => {
-        const embed = new MessageEmbed()
-        .setAuthor("Available Commands", client.user.displayAvatarURL({format: "png"}))
-        .setDescription("`loop`, `nowplaying`, `pause`, `play`, `queue`, `resume`, `skip`, `stop`, `volume`")
-        .setFooter("github:AlvvxL/lavalink-musicbot")
-        .setColor("#7289DA");
-        message.channel.send(embed);
+    aliases: ["commands", "?"],
+    exec: (msg) => {
+        const commands = msg.client.commands
+            .filter(c => !unlisted.includes(c.name))
+            .map(c => `\`${c.name}\``);
+
+        const embed = util.embed()
+            .setAuthor("Command List", msg.client.user.displayAvatarURL())
+            .setDescription(commands.join(", "))
+            .setTimestamp();
+
+        msg.channel.send(embed);
     }
 };

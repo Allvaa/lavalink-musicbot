@@ -1,9 +1,18 @@
+const util = require("../util");
+
 module.exports = {
     name: "loop",
-    run: async (client, message, args) => {
-        const serverQueue = client.musicManager.queue.get(message.guild.id);
-        if (!serverQueue) return message.channel.send("Queue is empty!");
-        serverQueue.loop = !serverQueue.loop;
-        message.channel.send(`Loop has been ${serverQueue.loop ? "enabled" : "disabled"}`);
+    aliases: ["repeat"],
+    exec: (msg) => {
+        const { music } = msg.guild;
+        if (!music.player) return msg.channel.send(util.embed().setDescription("❌ | Currently not playing anything."));
+        if (!msg.member.voice.channel)
+            return msg.channel.send(util.embed().setDescription("❌ | You must be on a voice channel."));
+        if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
+            return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
+
+        music.loop = !music.loop;
+
+        msg.channel.send(util.embed().setDescription(`✅ | Loop ${music.loop ? "enabled" : "disabled"}.`));
     }
 };

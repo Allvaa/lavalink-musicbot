@@ -1,10 +1,11 @@
+const util = require("../util");
+
 module.exports = {
     name: "nowplaying",
-    run: async (client, message, args) => {
-        const serverQueue = client.musicManager.queue.get(message.guild.id);
-        if (!serverQueue) return message.channel.send("Queue is empty!");
-        if (!serverQueue.playing) return message.channel.send("Player paused.");
-        const currSong = serverQueue.songs[0];
-        message.channel.send(`Now playing: **${currSong.info.title}** by *${currSong.info.author}*`);
+    aliases: ["np", "nowplay"],
+    exec: (msg) => {
+        const { music } = msg.guild;
+        if (!music.player || !music.player.playing) return msg.channel.send(util.embed().setDescription("❌ | Currently not playing anything."));
+        msg.channel.send(util.embed().setDescription(`🎶 | Now playing **${music.current.info.title}**.`));
     }
 };
