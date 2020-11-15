@@ -1,10 +1,10 @@
 {
   "name": "lavalink-musicbot",
   "version": "1.0.0",
-  "description": "Music bot that uses Lavalink for its audio player",
+  "description": "Music bot that uses Lavalink for its audio player.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node ."
   },
   "repository": {
     "type": "git",
