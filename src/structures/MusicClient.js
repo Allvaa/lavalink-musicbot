@@ -25,6 +25,12 @@ module.exports = class MusicClient extends Client {
         this.loadCommands();
         this.loadEventListeners();
         this.login(process.env.TOKEN);
+
+        this.manager
+            .on("ready", node => console.log(`Node ${node.id} is ready!`))
+            .on("disconnect", (ws, node) => console.log(`Node ${node.id} disconnected.`))
+            .on("reconnecting", (node) => console.log(`Node ${node.id} tries to reconnect.`))
+            .on("error", (error, node) => console.log(`Node ${node.id} got an error: ${error}`));
     }
 
     /** @private */
