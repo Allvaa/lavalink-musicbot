@@ -1,11 +1,13 @@
 const util = require("../util");
 
+const unlisted = ["eval", "source"];
+
 module.exports = {
     name: "help",
     aliases: ["commands", "?"],
     exec: (msg) => {
         const commands = msg.client.commands
-            .filter(c => c.name !== "eval")
+            .filter(c => !unlisted.includes(c.name))
             .map(c => `\`${c.name}\``);
 
         const embed = util.embed()
