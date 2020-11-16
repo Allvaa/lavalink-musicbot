@@ -28,13 +28,12 @@ module.exports = {
                 const track = tracks[0];
                 track.requester = msg.author;
                 music.queue.push(track);
-                if (music.player) msg.channel.send(util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`));
+                if (music.player && music.player.playing)
+                    msg.channel.send(util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`));
             }
             
-            if (!music.player) {
-                await music.join(msg.member.voice.channel);
-                await music.start();
-            }
+            if (!music.player) await music.join(msg.member.voice.channel);
+            if (!music.player.playing) await music.start();
 
             music.setTextCh(msg.channel);
         } catch (e) {
