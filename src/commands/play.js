@@ -15,7 +15,7 @@ module.exports = {
 
         const query = args.join(" ");
         try {
-            const { loadType, playlistInfo: { name }, tracks } = await music.load(isURL(query) ? query : `ytsearch:${query}`);
+            const { loadType, playlistInfo: { name }, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
             if (!tracks.length) return msg.channel.send(util.embed().setDescription("❌ | Couldn't find any results."));
             
             if (loadType === "PLAYLIST_LOADED") {
@@ -41,13 +41,3 @@ module.exports = {
         }
     }
 };
-
-function isURL(url) {
-    try {
-        new URL(url);
-        return true;
-    }
-    catch {
-        return false;
-    }
-}
