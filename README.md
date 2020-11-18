@@ -12,4 +12,4 @@ Music bot that uses Lavalink for its audio player.
 
 ## Author
 - GitHub [@Allvaa](https://github.com/Allvaa)
-- Discord [allvzx#6263](https://discord.com/users/369507341973979136)
+- Discord [allvzx#2840](https://discord.com/users/740075062190669884)
