@@ -10,7 +10,7 @@ module.exports = class Rest extends require("lavacord").Rest {
      * @returns {Promise<import("lavacord").TrackResponse>}
      */
     static async load(node, query) {
-        if (!spotifyResolver.has(node.id)) {
+        if (process.env.ENABLE_SPOTIFY === "true" && !spotifyResolver.has(node.id)) {
             spotifyResolver.set(node.id, new LavaSpotify({
                 host: node.host,
                 port: node.port,
@@ -22,6 +22,6 @@ module.exports = class Rest extends require("lavacord").Rest {
             await spotifyResolver.get(node.id).requestToken();
         }
         const spotify = spotifyResolver.get(node.id);
-        return spotify.isValidURL(query) ? await spotify.load(query) : await super.load(node, query);
+        return process.env.ENABLE_SPOTIFY === "true" && spotify.isValidURL(query) ? await spotify.load(query) : await super.load(node, query);
     }
 };
