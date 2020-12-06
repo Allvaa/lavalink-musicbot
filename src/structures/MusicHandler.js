@@ -1,4 +1,4 @@
-const { Rest } = require("lavacord");
+const Rest = require("./Rest");
 const util = require("../util");
 
 module.exports = class MusicHandler {
