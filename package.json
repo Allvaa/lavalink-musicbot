@@ -25,6 +25,6 @@
     "pretty-ms": "^7.0.1"
   },
   "devDependencies": {
-    "eslint": "^7.13.0"
+    "eslint": "^7.15.0"
   }
 }
