@@ -20,7 +20,7 @@
     "@lavacord/discord.js": "0.0.7",
     "discord.js": "^12.5.1",
     "dotenv": "^8.2.0",
-    "lava-spotify": "github:Allvaa/lava-spotify#83011d5",
+    "lava-spotify": "github:Allvaa/lava-spotify#71c9aa7",
     "lavacord": "^1.1.9",
     "pretty-ms": "^7.0.1"
   },
