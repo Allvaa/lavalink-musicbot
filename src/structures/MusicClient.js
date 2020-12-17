@@ -1,6 +1,6 @@
 const { Manager } = require("@lavacord/discord.js");
 const { Client, Collection } = require("discord.js");
-const { readdir } = require("fs/promises");
+const { promises: { readdir } } = require("fs");
 const { join } = require("path");
 
 require("../extensions");
