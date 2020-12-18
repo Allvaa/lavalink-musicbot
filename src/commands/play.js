@@ -14,6 +14,8 @@ module.exports = {
             return msg.channel.send(util.embed().setDescription(`❌ | Lavalink node not connected.`));
 
         const query = args.join(" ");
+        if (!query) return msg.channel.send(util.embed().setDescription(`❌ | Missing args.`));
+
         try {
             const { loadType, playlistInfo: { name }, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
             if (!tracks.length) return msg.channel.send(util.embed().setDescription("❌ | Couldn't find any results."));
