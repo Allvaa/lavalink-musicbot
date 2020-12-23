@@ -3,7 +3,7 @@ const util = require("../util");
 
 module.exports = {
     name: "stats",
-    exec: async (msg) => {
+    exec: (msg) => {
         /** @type {import("lavacord").LavalinkNode[]} */
         const nodes = [...msg.client.manager.nodes.values()];
 
