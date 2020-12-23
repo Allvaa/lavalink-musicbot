@@ -22,7 +22,7 @@ module.exports = {
             tracks = tracks.slice(0, 10);
 
             const resultMessage = await msg.channel.send(util.embed()
-                .setAuthor("Search Result.", msg.client.user.displayAvatarURL())
+                .setAuthor("Search Result", msg.client.user.displayAvatarURL())
                 .setDescription(tracks.map((x, i) => `\`${++i}.\` **${x.info.title}**`))
                 .setFooter("Select from 1 to 10 or type \"cancel\" to cancel the command."));
 

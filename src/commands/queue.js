@@ -15,7 +15,7 @@ module.exports = {
         let currPage = 0;
         
         const embed = util.embed()
-            .setAuthor(`${msg.guild.name} music queue.`, msg.guild.iconURL({ dynamic: true }))
+            .setAuthor(`${msg.guild.name} Music Queue`, msg.guild.iconURL({ dynamic: true }))
             .setDescription(chunked[0].join("\n"))
             .setFooter(`Page 1 of ${chunked.length}.`);
                 
