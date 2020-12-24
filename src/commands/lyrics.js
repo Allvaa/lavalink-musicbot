@@ -12,7 +12,7 @@ module.exports = {
     aliases: ["ly"],
     exec: async (msg, args) => {
         const query = args.join(" ");
-        if (!query) return msg.channel.send(util.embed().setDescription(`❌ | Missing args.`));
+        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
 
         try {
             const res = await getLyrics(query);

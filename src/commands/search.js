@@ -10,10 +10,10 @@ module.exports = {
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
 
         if (!music.node || !music.node.connected)
-            return msg.channel.send(util.embed().setDescription(`❌ | Lavalink node not connected.`));
+            return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
 
         const query = args.join(" ");
-        if (!query) return msg.channel.send(util.embed().setDescription(`❌ | Missing args.`));
+        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
 
         try {
             let { tracks } = await music.load(`ytsearch:${query}`);
@@ -27,7 +27,7 @@ module.exports = {
                 .setFooter("Select from 1 to 10 or type \"cancel\" to cancel the command."));
 
             const collector = await awaitMessages();
-            if (!collector) return resultMessage.edit(util.embed().setDescription(`❌ | Time is up!`));
+            if (!collector) return resultMessage.edit(util.embed().setDescription("❌ | Time is up!"));
             const response = collector.first();
 
             if (response.deletable) response.delete();

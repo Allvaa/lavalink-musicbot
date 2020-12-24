@@ -11,10 +11,10 @@ module.exports = {
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
 
         if (!music.node || !music.node.connected)
-            return msg.channel.send(util.embed().setDescription(`❌ | Lavalink node not connected.`));
+            return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
 
         const query = args.join(" ");
-        if (!query) return msg.channel.send(util.embed().setDescription(`❌ | Missing args.`));
+        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
 
         try {
             const { loadType, playlistInfo: { name }, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
