@@ -1,7 +1,11 @@
 const fetch = require("node-fetch");
 const util = require("../util");
 
-const getLyrics = async (query) => (await fetch(`https://some-random-api.ml/lyrics?title=${encodeURIComponent(query)}`)).json();
+const getLyrics = async (query) => {
+    const body = await (await fetch(`https://some-random-api.ml/lyrics?title=${encodeURIComponent(query)}`)).json();
+    if (body.error) throw Error(body.error);
+    return body;
+};
 
 module.exports = {
     name: "lyrics",
@@ -12,8 +16,6 @@ module.exports = {
 
         try {
             const res = await getLyrics(query);
-            if (!res) return msg.channel.send(util.embed().setDescription(`❌ | Couldn't find any results.`));
-
             const splittedLyrics = util.chunk(res.lyrics, 2048);
 
             for (const lyrics of splittedLyrics) {
@@ -32,7 +34,8 @@ module.exports = {
                 await msg.channel.send(embed);
             }
         } catch (e) {
-            msg.channel.send(`An error occured: ${e.message}.`);
+            if (e.message === "Sorry I couldn't find that song's lyrics") msg.channel.send(util.embed().setDescription(`❌ | ${e.message}`));
+            else msg.channel.send(`An error occured: ${e.message}.`);   
         }
     }
 };
