@@ -1,5 +1,7 @@
-const getLyrics = require("@allvaa/get-lyrics");
+const fetch = require("node-fetch");
 const util = require("../util");
+
+const getLyrics = async (query) => (await fetch(`https://some-random-api.ml/lyrics?title=${encodeURIComponent(query)}`)).json();
 
 module.exports = {
     name: "lyrics",
@@ -18,11 +20,13 @@ module.exports = {
                 const embed = util.embed();
                 if (splittedLyrics.indexOf(lyrics) == 0) {
                     embed
-                        .setAuthor(res.title, null, res.geniusUrl)
-                        .setThumbnail(res.image);
+                        .setAuthor(res.author)
+                        .setTitle(res.title)
+                        .setURL(res.links.genius)
+                        .setThumbnail(res.thumbnail.genius);
                 }
                 if (splittedLyrics.indexOf(lyrics) == splittedLyrics.length - 1) {
-                    embed.setFooter("Source: Genius", "https://vrlz.is-inside.me/fJlQ5xKB.jpg");
+                    embed.setFooter("Source: Genius\nAPI: Some Random Api", "https://vrlz.is-inside.me/fJlQ5xKB.jpg");
                 }
                 embed.setDescription(lyrics);
                 await msg.channel.send(embed);
