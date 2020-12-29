@@ -19,8 +19,7 @@ module.exports = {
         if (isNaN(iToRemove) || iToRemove < 1 || iToRemove > music.queue.length)
             return msg.channel.send(util.embed().setDescription("❌ | Invalid number to remove."));
 
-        iToRemove--;
-        const removed = music.queue.splice(iToRemove, 1)[0];
+        const removed = music.queue.splice(--iToRemove, 1)[0];
         msg.channel.send(util.embed().setDescription(`✅ | Removed **${removed.info.title}** from the queue.`));
     }
 };
