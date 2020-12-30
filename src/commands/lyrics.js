@@ -16,23 +16,18 @@ module.exports = {
 
         try {
             const res = await getLyrics(query);
-            const splittedLyrics = util.chunk(res.lyrics, 2048);
+            const splittedLyrics = util.chunk(res.lyrics, 1024);
 
-            for (const lyrics of splittedLyrics) {
-                const embed = util.embed();
-                if (splittedLyrics.indexOf(lyrics) == 0) {
-                    embed
-                        .setAuthor(res.author)
-                        .setTitle(res.title)
-                        .setURL(res.links.genius)
-                        .setThumbnail(res.thumbnail.genius);
-                }
-                if (splittedLyrics.indexOf(lyrics) == splittedLyrics.length - 1) {
-                    embed.setFooter("Source: Genius\nAPI: Some Random Api", "https://vrlz.is-inside.me/fJlQ5xKB.jpg");
-                }
-                embed.setDescription(lyrics);
-                await msg.channel.send(embed);
-            }
+            const embed = util.embed()
+                .setAuthor(res.author)
+                .setTitle(res.title)
+                .setURL(res.links.genius)
+                .setThumbnail(res.thumbnail.genius)
+                .setDescription(splittedLyrics[0])
+                .setFooter(`Page 1 of ${splittedLyrics.length}.`);
+
+            const lyricsMsg = await msg.channel.send(embed);
+            if (splittedLyrics.length > 1) await util.pagination(lyricsMsg, msg.author, splittedLyrics);
         } catch (e) {
             if (e.message === "Sorry I couldn't find that song's lyrics") msg.channel.send(util.embed().setDescription(`❌ | ${e.message}`));
             else msg.channel.send(`An error occured: ${e.message}.`);   
