@@ -18,7 +18,6 @@ module.exports = {
 
         try {
             const queueMsg = await msg.channel.send(embed);
-
             if (chunked.length > 1) await util.pagination(queueMsg, msg.author, chunked);
         } catch (e) {
             msg.channel.send(`An error occured: ${e.message}.`);
