@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+const { MessageEmbed, Permissions } = require("discord.js");
 const prettyMilliseconds = require("pretty-ms");
 
 module.exports = class Util {
@@ -71,5 +71,14 @@ module.exports = class Util {
             .on("end", (_, reason) => {
                 if (["time", "user"].includes(reason)) msg.reactions.removeAll();
             });
+    }
+
+    /**
+     * @param {import("discord.js").PermissionResolvable} memberPerms
+     * @param {import("discord.js").PermissionResolvable} requiredPerms
+     * @returns {Permissions}
+     */
+    static missingPerms(memberPerms, requiredPerms) {
+        return new Permissions(memberPerms).missing(new Permissions(requiredPerms));
     }
 };
