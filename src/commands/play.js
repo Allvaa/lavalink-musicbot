@@ -10,6 +10,10 @@ module.exports = {
         if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
 
+        const missingPerms = util.missingPerms(msg.guild.me.permissionsIn(msg.member.voice.channel), ["CONNECT", "SPEAK"]);
+        if ((!music.player || !music.player.playing) && missingPerms.length)
+            return msg.channel.send(util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`));
+
         if (!music.node || !music.node.connected)
             return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
 
