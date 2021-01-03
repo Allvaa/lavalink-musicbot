@@ -76,7 +76,7 @@ module.exports = class Util {
     /**
      * @param {import("discord.js").PermissionResolvable} memberPerms
      * @param {import("discord.js").PermissionResolvable} requiredPerms
-     * @returns {import("discord.js").PermissionString}
+     * @returns {import("discord.js").PermissionString[]}
      */
     static missingPerms(memberPerms, requiredPerms) {
         return new Permissions(memberPerms).missing(new Permissions(requiredPerms));
