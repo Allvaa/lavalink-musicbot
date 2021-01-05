@@ -7,7 +7,7 @@ Music bot that uses Lavalink for its audio player.
 
 ## Usage
 - Rename `.env.example` to `.env` and replace those values with yours.
-- Install dependencies `npm i --production`.
+- Install dependencies `npm i --production` or with yarn `yarn --prod`.
 - Running the bot `npm start`.
 
 ## Author
