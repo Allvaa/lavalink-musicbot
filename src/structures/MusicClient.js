@@ -2,6 +2,7 @@ const { Manager } = require("@lavacord/discord.js");
 const { Client, Collection } = require("discord.js");
 const { promises: { readdir } } = require("fs");
 const { join } = require("path");
+const { Client: LSClient } = require("lava-spotify");
 
 require("../extensions");
 
@@ -18,6 +19,14 @@ module.exports = class MusicClient extends Client {
                 password: process.env.LAVA_PASS
             }
         ]);
+        this.spotify = process.env.ENABLE_SPOTIFY === "true"
+            ? new LSClient({
+                clientID: process.env.SPOTIFY_ID,
+                clientSecret: process.env.SPOTIFY_SECRET,
+                playlistPageLoadLimit: process.env.SPOTIFY_PLAYLIST_PAGE_LIMIT
+            }, [...[...this.manager.nodes.values()]])
+            : null;
+
         this.prefix = process.env.PREFIX;
     }
 

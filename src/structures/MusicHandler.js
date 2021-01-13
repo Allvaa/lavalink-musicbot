@@ -76,7 +76,7 @@ module.exports = class MusicHandler {
     }
 
     async load(query) {
-        const res = await Rest.load(this.node, query);
+        const res = await Rest.load(this.node, query, this.client.spotify);
         return res;
     }
 
