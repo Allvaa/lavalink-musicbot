@@ -565,9 +565,10 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
 
-"lava-spotify@github:Allvaa/lava-spotify#586e73f":
+lava-spotify@^2.1.0:
   version "2.1.0"
-  resolved "https://codeload.github.com/Allvaa/lava-spotify/tar.gz/586e73ff2c2f28bcd5ef3cbc36ae664c2a68907c"
+  resolved "https://registry.yarnpkg.com/lava-spotify/-/lava-spotify-2.1.0.tgz#86950d1cbda91eb38cafb64f9aec9a0c72c41ae7"
+  integrity sha512-X5CwPzW0T5PZM1DEFdKihZ/AelOXwUr7mnqQPrOyz0r1UkWozAe6Bte8gITg6C9FwspSuZSoQcFM4FxyKQfcUA==
   dependencies:
     node-superfetch "^0.1.10"
 
