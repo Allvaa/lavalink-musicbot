@@ -95,8 +95,12 @@ module.exports = class MusicHandler {
         if (this.player.paused) await this.player.pause(false);
     }
 
-    async skip() {
+    async skip(num = 1) {
         if (!this.player) return;
+        if (num > 1) {
+            this.queue.unshift(this.queue[num - 1]);
+            this.queue.splice(num, 1);
+        } 
         await this.player.stop();
     }
 
