@@ -2,7 +2,7 @@ const { Manager } = require("@lavacord/discord.js");
 const { Client, Collection } = require("discord.js");
 const { promises: { readdir } } = require("fs");
 const { join } = require("path");
-const { Client: LSClient } = require("lava-spotify");
+const { LavasfyClient } = require("lavasfy");
 
 require("../extensions");
 
@@ -20,7 +20,7 @@ module.exports = class MusicClient extends Client {
             }
         ]);
         this.spotify = process.env.ENABLE_SPOTIFY === "true"
-            ? new LSClient({
+            ? new LavasfyClient({
                 clientID: process.env.SPOTIFY_ID,
                 clientSecret: process.env.SPOTIFY_SECRET,
                 playlistPageLoadLimit: process.env.SPOTIFY_PLAYLIST_PAGE_LIMIT

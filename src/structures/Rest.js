@@ -2,7 +2,7 @@ module.exports = class Rest extends require("lavacord").Rest {
     /**
      * @param {import("lavacord").LavalinkNode} node
      * @param {string} query
-     * @param {import("lava-spotify").Client} lsClient
+     * @param {import("lavasfy").LavasfyClient} lsClient
      * @returns {Promise<import("lavacord").TrackResponse>}
      */
     static async load(node, query, lsClient) {

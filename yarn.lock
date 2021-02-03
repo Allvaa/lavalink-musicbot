@@ -565,12 +565,6 @@ json-stable-stringify-without-jsonify@^1.0.1:
   resolved "https://registry.yarnpkg.com/json-stable-stringify-without-jsonify/-/json-stable-stringify-without-jsonify-1.0.1.tgz#9db7b59496ad3f3cfef30a75142d2d930ad72651"
   integrity sha1-nbe1lJatPzz+8wp1FC0tkwrXJlE=
 
-"lava-spotify@github:Allvaa/lava-spotify#586e73f":
-  version "2.1.0"
-  resolved "https://codeload.github.com/Allvaa/lava-spotify/tar.gz/586e73ff2c2f28bcd5ef3cbc36ae664c2a68907c"
-  dependencies:
-    node-superfetch "^0.1.10"
-
 lavacord@1.1.9:
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/lavacord/-/lavacord-1.1.9.tgz#e7e355f969eb082a36e20814fdc6a9b01f3f81a1"
@@ -578,6 +572,13 @@ lavacord@1.1.9:
   dependencies:
     node-fetch "^2.6.0"
     ws "^7.3.0"
+
+lavasfy@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/lavasfy/-/lavasfy-2.1.2.tgz#3ce245619458b4eb6eb08bdf842abaed7cdb6aca"
+  integrity sha512-LqxIq/FGOzj95eaY++g92j4NtQUCForndDOGParI3nTD5GbKq68ofO1tPQCkeQHAKB24eMZ6M4oOQLB8TBizDg==
+  dependencies:
+    node-superfetch "^0.1.10"
 
 levn@^0.4.1:
   version "0.4.1"
