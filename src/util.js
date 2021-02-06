@@ -81,4 +81,9 @@ module.exports = class Util {
     static missingPerms(memberPerms, requiredPerms) {
         return new Permissions(memberPerms).missing(new Permissions(requiredPerms));
     }
+
+    static moveArrayElement(arr, fromIndex, toIndex) {
+        arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0]);
+        return arr;
+    }
 };
