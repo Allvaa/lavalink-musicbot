@@ -7,7 +7,6 @@ module.exports = {
     aliases: ["np", "nowplay"],
     exec: (msg) => {
         const { music } = msg.guild;
-		msg.delete({ timeout: 000 /*time unitl delete in milliseconds*/});
 		 if (!music.player || !music.player.playing) return msg.channel.send(util.embed().setDescription("❌ | Currently not playing anything.")		
 		.setFooter(msg.author.username,  msg.author.displayAvatarURL({ dynamic: true }))
 		.setTimestamp());
