@@ -27,7 +27,7 @@ module.exports = class MusicClient extends Client {
             }, [...[...this.manager.nodes.values()]])
             : null;
 
-        this.prefix = process.env.PREFIX;
+     
     }
 
     build() {
