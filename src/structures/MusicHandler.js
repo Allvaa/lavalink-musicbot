@@ -6,7 +6,8 @@ module.exports = class MusicHandler {
     constructor(guild) {
         this.guild = guild;
         this.volume = 100;
-        this.loop = false;
+         this.queue.loop = null;
+	 if (this.current) {this.current.loop = null;}
         this.previous = null;
         this.current = null;
         this.queue = [];
@@ -32,7 +33,8 @@ module.exports = class MusicHandler {
     }
 
     reset() {
-        this.loop = false;
+         this.queue.loop = null;
+	 if (this.current) {this.current.loop = null;}
         this.volume = 100;
         this.previous = null;
         this.current = null;
@@ -57,8 +59,9 @@ module.exports = class MusicHandler {
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
                 this.previous = this.current;
+                if (this.current.loop) this.queue.unshift(this.previous);
                 this.current = null;
-                if (this.loop) this.queue.push(this.previous);
+                if (this.queue.loop) this.queue.push(this.previous);
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
                     if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
@@ -106,7 +109,8 @@ module.exports = class MusicHandler {
 
     async stop() {
         if (!this.player) return;
-        this.loop = false;
+         this.queue.loop = null;
+	 if (this.current) {this.current.loop = null;}
         this.queue = [];
         await this.skip();
     }
