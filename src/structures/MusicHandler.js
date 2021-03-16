@@ -6,8 +6,7 @@ module.exports = class MusicHandler {
     constructor(guild) {
         this.guild = guild;
         this.volume = 100;
-        this.queue.loop = null;
-        if (this.current) {this.current.loop = null;}
+        this.loop = 0; // 0 = none; 1 = track; 2 = queue;
         this.previous = null;
         this.current = null;
         this.queue = [];
@@ -33,8 +32,7 @@ module.exports = class MusicHandler {
     }
 
     reset() {
-        this.queue.loop = null;
-        if (this.current) {this.current.loop = null;}
+        this.loop = 0;
         this.volume = 100;
         this.previous = null;
         this.current = null;
@@ -59,9 +57,9 @@ module.exports = class MusicHandler {
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
                 this.previous = this.current;
-                if (this.current.loop) this.queue.unshift(this.previous);
                 this.current = null;
-                if (this.queue.loop) this.queue.push(this.previous);
+                if (this.loop === 1) this.queue.unshift(this.previous);
+                else if (this.loop === 2) this.queue.push(this.previous);
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
                     if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
@@ -98,11 +96,11 @@ module.exports = class MusicHandler {
         if (this.player.paused) await this.player.pause(false);
     }
 
-    async skip(num = 1) {
+    async skip(to = 1) {
         if (!this.player) return;
-        if (num > 1) {
-            this.queue.unshift(this.queue[num - 1]);
-            this.queue.splice(num, 1);
+        if (to > 1) {
+            this.queue.unshift(this.queue[to - 1]);
+            this.queue.splice(to, 1);
         } 
         await this.player.stop();
     }
