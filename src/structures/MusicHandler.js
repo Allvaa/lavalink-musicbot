@@ -10,7 +10,6 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
-        this.state = { connected: false, position: 0, time: 0 };
         /** @type {import("discord.js").TextChannel|null} */
         this.textChannel = null;
     }
@@ -38,7 +37,6 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
-        this.state = { connected: false, position: 0, time: 0 };
         this.textChannel = null;
     }
 
@@ -70,7 +68,6 @@ module.exports = class MusicHandler {
                 }
                 this.start();
             })
-            .on("playerUpdate", x => this.state = x.state)
             .on("error", console.error);
     }
 
