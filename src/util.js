@@ -86,4 +86,14 @@ module.exports = class Util {
         arr.splice(toIndex, 0, arr.splice(fromIndex, 1)[0]);
         return arr;
     }
+    
+    static progress(current, total, size = 16) {
+        const percent = current / total * size;
+        const progbar = new Array(size).fill("▬");
+        progbar[Math.round(percent)] = "🔘";
+        return {
+            bar: progbar.join(""),
+            percent
+        };
+    }
 };
