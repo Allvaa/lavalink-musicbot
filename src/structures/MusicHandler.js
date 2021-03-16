@@ -6,8 +6,8 @@ module.exports = class MusicHandler {
     constructor(guild) {
         this.guild = guild;
         this.volume = 100;
-         this.queue.loop = null;
-	 if (this.current) {this.current.loop = null;}
+        this.queue.loop = null;
+        if (this.current) {this.current.loop = null;}
         this.previous = null;
         this.current = null;
         this.queue = [];
@@ -33,8 +33,8 @@ module.exports = class MusicHandler {
     }
 
     reset() {
-         this.queue.loop = null;
-	 if (this.current) {this.current.loop = null;}
+        this.queue.loop = null;
+        if (this.current) {this.current.loop = null;}
         this.volume = 100;
         this.previous = null;
         this.current = null;
@@ -109,8 +109,8 @@ module.exports = class MusicHandler {
 
     async stop() {
         if (!this.player) return;
-         this.queue.loop = null;
-	 if (this.current) {this.current.loop = null;}
+        this.queue.loop = null;
+        if (this.current) {this.current.loop = null;}
         this.queue = [];
         await this.skip();
     }
