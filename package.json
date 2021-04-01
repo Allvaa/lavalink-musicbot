@@ -18,7 +18,7 @@
   "homepage": "https://github.com/Allvaa/lavalink-musicbot#readme",
   "dependencies": {
     "@lavacord/discord.js": "0.0.7",
-    "discord.js": "^12.5.1",
+    "discord.js": "^12.5.2",
     "dotenv": "^8.2.0",
     "lavasfy": "^2.1.2",
     "pretty-ms": "^7.0.1"
