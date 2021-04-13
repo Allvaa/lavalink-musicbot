@@ -2,7 +2,7 @@
 Music bot that uses Lavalink for its audio player.
 
 ## Prerequisites
-- [Lavalink server](https://github.com/Frederikam/Lavalink#server-configuration).
+- [Lavalink server](https://github.com/freyacodes/Lavalink#server-configuration).
 - Node.js v12 or above.
 
 ## Usage
