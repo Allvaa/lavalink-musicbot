@@ -11,8 +11,13 @@ module.exports = {
     name: "lyrics",
     aliases: ["ly"],
     exec: async (msg, args) => {
-        const query = args.join(" ");
-        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
+        let query = args.join(" ");
+        if (!query && !msg.guild.music.current) {
+            return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
+        } else {
+            const separatedArtistAndTitle = /(.+) - (.+)/.test(msg.guild.music.current.info.title);
+            query = `${separatedArtistAndTitle ? "" : msg.guild.music.current.info.author} - ${msg.guild.music.current.info.title}`;
+        }
 
         try {
             const res = await getLyrics(query);
