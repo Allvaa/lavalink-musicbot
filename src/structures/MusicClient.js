@@ -23,7 +23,9 @@ module.exports = class MusicClient extends Client {
             ? new LavasfyClient({
                 clientID: process.env.SPOTIFY_ID,
                 clientSecret: process.env.SPOTIFY_SECRET,
-                playlistPageLoadLimit: process.env.SPOTIFY_PLAYLIST_PAGE_LIMIT
+                playlistLoadLimit: process.env.SPOTIFY_PLAYLIST_PAGE_LIMIT,
+                audioOnlyResults: true,
+                useSpotifyMetadata: true
             }, [...[...this.manager.nodes.values()]])
             : null;
 
