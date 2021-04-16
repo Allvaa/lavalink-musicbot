@@ -107,8 +107,7 @@ module.exports = class MusicHandler {
 
     async stop() {
         if (!this.player) return;
-        this.queue.loop = null;
-        if (this.current) {this.current.loop = null;}
+        this.loop = 0;
         this.queue = [];
         await this.skip();
     }
