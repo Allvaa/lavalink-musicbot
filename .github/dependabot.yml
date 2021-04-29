@@ -1,0 +1,21 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: daily
+    time: "22:00"
+  open-pull-requests-limit: 10
+  versioning-strategy: increase
+  ignore:
+  - dependency-name: discord.js
+    versions:
+    - 12.5.2
+  - dependency-name: eslint
+    versions:
+    - 7.18.0
+    - 7.20.0
+    - 7.21.0
+  - dependency-name: lava-spotify
+    versions:
+    - 2.1.0
