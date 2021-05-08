@@ -1,5 +1,6 @@
 const Rest = require("./Rest");
 const util = require("../util");
+let disconnectTimer;
 
 module.exports = class MusicHandler {
     /** @param {import("discord.js").Guild} guild */
@@ -51,6 +52,7 @@ module.exports = class MusicHandler {
 
         this.player
             .on("start", () => {
+                clearTimeout(disconnectTimer);
                 this.current = this.queue.shift();
                 if (this.textChannel) this.textChannel.send(util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`));
             })
@@ -61,9 +63,14 @@ module.exports = class MusicHandler {
                 if (this.loop === 1) this.queue.unshift(this.previous);
                 else if (this.loop === 2) this.queue.push(this.previous);
                 if (!this.queue.length) {
-                    this.client.manager.leave(this.guild.id);
-                    if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
-                    this.reset();
+                    if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty."));
+                    if (process.env.LEAVE_TIMEOUT > 0) {
+                        disconnectTimer = setTimeout(() => {
+                            this.client.manager.leave(this.guild.id);
+                            if (this.textChannel) this.textChannel.send(util.embed().setDescription("👋 | Leaving voice channel.."));
+                            this.reset();
+                        }, process.env.LEAVE_TIMEOUT);
+                    }
                     return;
                 }
                 this.start();
@@ -101,7 +108,7 @@ module.exports = class MusicHandler {
         if (to > 1) {
             this.queue.unshift(this.queue[to - 1]);
             this.queue.splice(to, 1);
-        } 
+        }
         await this.player.stop();
     }
 
