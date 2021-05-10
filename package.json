@@ -19,7 +19,7 @@
   "dependencies": {
     "@lavacord/discord.js": "0.0.7",
     "discord.js": "^12.5.3",
-    "dotenv": "^8.2.0",
+    "dotenv": "^9.0.2",
     "lavasfy": "^2.2.0",
     "pretty-ms": "^7.0.1"
   },
