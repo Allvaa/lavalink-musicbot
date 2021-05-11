@@ -14,7 +14,9 @@ module.exports = {
         if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
         try {
-            music.queue.length = [];
+            let first = music.queue[0];
+            music.queue = []
+            music.queue.push(first);
             msg.channel.send(util.embed().setDescription("✅ | cleared The Queue")).catch(e => e);
         } catch (e) {
             msg.channel.send(`An error occured: ${e.message}.`);
