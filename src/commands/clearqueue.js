@@ -3,7 +3,7 @@ const util = require("../util");
 module.exports = {
     name: "clearqueue",
     description:"Clears The Total Queue.",
-    aliases: ["clr","clear],
+    aliases: ["clr","clear"],
     exec: (msg) => {
         const { music } = msg.guild;
         if (!music.player || !music.player.playing) return msg.channel.send(util.embed().setDescription("❌|  Currently not playing anything."));
