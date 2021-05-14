@@ -1,5 +1,7 @@
 const util = require("../util");
 
+const getAttachmentURL = (msg) => (msg.attachments.first() || {}).url;
+
 module.exports = {
     name: "play",
     aliases: ["p"],
@@ -17,7 +19,7 @@ module.exports = {
         if (!music.node || !music.node.connected)
             return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
 
-        const query = args.join(" ");
+        const query = args.join(" ") || getAttachmentURL(msg);
         if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
 
         try {
