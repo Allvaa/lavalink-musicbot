@@ -3,7 +3,7 @@ const util = require("../util");
 module.exports = {
     name: "removedupes",
     aliases: ["rdp"],
-    description: "Removes All The Dupes In The Queue.",
+    description: "Removes duplicated tracks from the queue.",
     exec: (msg) => {
         const { music } = msg.guild;
         const seen = {};
