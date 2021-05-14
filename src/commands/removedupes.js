@@ -1,5 +1,4 @@
 const util = require("../util");
-const Discord = require('discord.js');
 
 module.exports = {
     name: "removedupes",
@@ -7,7 +6,7 @@ module.exports = {
     description: "Removes All The Dupes In The Queue.",
     exec: (msg) => {
         const { music } = msg.guild;
-        var seen = new Discord.Collection();
+        const seen = {};
 
         if (!music.player || !music.player.playing) return msg.channel.send(util.embed().setDescription("❌|  Currently not playing anything."));
         if (!music.queue.length) return msg.channel.send(util.embed().setDescription("❌ | Queue is empty."));
@@ -17,11 +16,11 @@ module.exports = {
         if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
         try {
-            music.queue.forEach(song => {
-                if(!seen.has(song.track)) seen.set(song.track, song);
-            });
+            for (const song of music.queue) {
+                if (seen[song.info.indentifier] === undefined) seen[song.info.indentifier] = song;
+            }
             
-            music.queue = seen.array()
+            music.queue = Object.values(seen);
             
             msg.channel.send(util.embed().setDescription("✅ | Removed all Dupes")).catch(e => e);
         } catch (e) {
