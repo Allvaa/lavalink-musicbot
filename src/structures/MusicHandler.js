@@ -60,6 +60,7 @@ module.exports = class MusicHandler {
                 this.current = null;
                 if (this.loop === 1) this.queue.unshift(this.previous);
                 else if (this.loop === 2) this.queue.push(this.previous);
+            if (this.loop === 69) this.loop = 1;
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
                     if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
@@ -102,6 +103,8 @@ module.exports = class MusicHandler {
             this.queue.unshift(this.queue[to - 1]);
             this.queue.splice(to, 1);
         } 
+       if (this.player.paused) await this.player.pause(false);
+		if (this.loop === 1 && this.queue[0]) this.loop = 69; 
         await this.player.stop();
     }
 
