@@ -106,8 +106,8 @@ module.exports = class MusicHandler {
         if (to > 1) {
             this.queue.unshift(this.queue[to - 1]);
             this.queue.splice(to, 1);
-        } 
-		if (this.loop === 1 && this.queue[0]) this.shouldSkipCurrent = true;
+        }
+        if (this.loop === 1 && this.queue[0]) this.shouldSkipCurrent = true;
         await this.player.stop();
     }
 
