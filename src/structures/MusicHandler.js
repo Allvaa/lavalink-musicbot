@@ -12,6 +12,7 @@ module.exports = class MusicHandler {
         this.queue = [];
         /** @type {import("discord.js").TextChannel|null} */
         this.textChannel = null;
+        this.shouldSkipCurrent = false;
     }
 
     get voiceChannel() {
@@ -58,8 +59,12 @@ module.exports = class MusicHandler {
                 if (data.reason === "REPLACED") return;
                 this.previous = this.current;
                 this.current = null;
-                if (this.loop === 1) this.queue.unshift(this.previous);
+
+                if (this.loop === 1 && !this.shouldSkipCurrent) this.queue.unshift(this.previous);
                 else if (this.loop === 2) this.queue.push(this.previous);
+
+                if (this.shouldSkipCurrent) this.shouldSkipCurrent = false;
+
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
                     if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
@@ -102,6 +107,7 @@ module.exports = class MusicHandler {
             this.queue.unshift(this.queue[to - 1]);
             this.queue.splice(to, 1);
         } 
+		if (this.loop === 1 && this.queue[0]) this.shouldSkipCurrent = true;
         await this.player.stop();
     }
 
