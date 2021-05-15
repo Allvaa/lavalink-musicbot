@@ -11,12 +11,14 @@ module.exports = {
     name: "lyrics",
     aliases: ["ly"],
     exec: async (msg, args) => {
-        let query = args.join(" ");
-        if (!query && !msg.guild.music.current) {
-            return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
-        } else {
+        let query;
+        if (args.length) {
+            query = args.join(" ");
+        } else if (msg.guild.music.current) {
             const separatedArtistAndTitle = /(.+) - (.+)/.test(msg.guild.music.current.info.title);
-            query = `${separatedArtistAndTitle ? "" : msg.guild.music.current.info.author} - ${msg.guild.music.current.info.title}`;
+            query = `${separatedArtistAndTitle ? msg.guild.music.current.info.title : msg.guild.music.current.info.author.replace(" - Topic", "")} - ${msg.guild.music.current.info.title}`;
+        } else {
+            return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
         }
 
         try {
