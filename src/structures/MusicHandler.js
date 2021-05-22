@@ -115,6 +115,8 @@ module.exports = class MusicHandler {
         }
         if (this.loop === 1 && this.queue[0]) this.shouldSkipCurrent = true;
         this.nightcore = false;
+        this.vaporwave = false;
+        this._8d = false;
         await this.player.stop();
     }
 
