@@ -11,6 +11,7 @@ module.exports = class MusicHandler {
         this.nightcore = false;
         this.vaporwave = false;
         this._8d = false;
+        this.bassboost = false;
         this.current = null;
         this.queue = [];
         /** @type {import("discord.js").TextChannel|null} */
@@ -114,9 +115,6 @@ module.exports = class MusicHandler {
             this.queue.splice(to, 1);
         }
         if (this.loop === 1 && this.queue[0]) this.shouldSkipCurrent = true;
-        this.nightcore = false;
-        this.vaporwave = false;
-        this._8d = false;
         await this.player.stop();
     }
 
@@ -141,15 +139,11 @@ module.exports = class MusicHandler {
         if(val === true){
             this.vaporwave = false;
             this._8d = false;
+            this.bassboost = false;
             this.player.node.send({
                 op: "filters",
                 guildId: this.guild.id || this.guild,
-                equalizer: [
-                    { band: 1, gain: 0.3 },
-                    { band: 0, gain: 0.3 },
-                ],
-                timescale: { pitch: 1.3999999523162842 },
-                tremolo: { depth: 0.3, frequency: 14 }
+                timescale: { speed: 1.1999999523162842, pitch: 1.2999999523163953, rate: 1 },
             });
             this.nightcore = true;
         }
@@ -157,7 +151,6 @@ module.exports = class MusicHandler {
             this.player.node.send({
                 op: "filters",
                 guildId: this.guild.id || this.guild,
-                timescale: { pitch : 1 }
             });
             this.nightcore = false;
         }
@@ -168,15 +161,11 @@ module.exports = class MusicHandler {
         if(val === true){
             this.nightcore = false;
             this._8d = false;
+            this.bassboost = false;
             this.player.node.send({
                 op: "filters",
                 guildId: this.guild.id || this.guild,
-                equalizer: [
-                    { band: 1, gain: 0.3 },
-                    { band: 0, gain: 0.3 },
-                ],
-                timescale: { pitch: 0.5 },
-                tremolo: { depth: 0.3, frequency: 14 },
+                timescale: { speed:0.8500000238418579, pitch: 0.800000011920929, rate: 1 },
             });
             this.vaporwave = true;
         }
@@ -184,7 +173,6 @@ module.exports = class MusicHandler {
             this.player.node.send({
                 op: "filters",
                 guildId: this.guild.id || this.guild,
-                timescale: { pitch : 1 }
             });
             this.vaporwave = false;
         }
@@ -195,6 +183,7 @@ module.exports = class MusicHandler {
         if(val === true){
             this.vaporwave = false;
             this.nightcore = false;
+            this.bassboost = false;
             this.player.node.send({
                 op: "filters",
                 guildId: this.guild.id || this.guild,
@@ -206,10 +195,24 @@ module.exports = class MusicHandler {
             this.player.node.send({
                 op: "filters",
                 guildId: this.guild.id || this.guild,
-                rotation : { rotationHz: 0 },
             });
             this._8d = false;
         }
         else return;
+    }
+
+    async setBassboost(bassboost) {
+        if (bassboost) {
+            this.nightcore = false;
+            this.vaporwave = false;
+            this._8d = false;
+            this.player.equalizer(Array(3).fill(null).map((n, i) => ({ band: i, gain: bassboost })));
+            this.bassboost = bassboost;
+        } else this.player.node.send({
+            op: "filters",
+            guildId: this.guild.id || this.guild,
+        });
+        this.bassboost = bassboost;
+        return this;
     }
 };
