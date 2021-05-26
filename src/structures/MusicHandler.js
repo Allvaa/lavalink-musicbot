@@ -206,6 +206,9 @@ module.exports = class MusicHandler {
             this.nightcore = false;
             this.vaporwave = false;
             this._8d = false;
+            this.set8D(false);
+            this.setNightcore(false);
+            this.setNightcore(false);
             this.player.equalizer(Array(3).fill(null).map((n, i) => ({ band: i, gain: bassboost })));
             this.bassboost = bassboost;
         } else this.player.node.send({
