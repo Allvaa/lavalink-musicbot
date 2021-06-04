@@ -9,7 +9,7 @@ module.exports = {
         timescale: { pitch: 0.5 }
     },
     "8d": {
-        rotation: { rotationHz: 0.29999 }
+        rotation: { rotationHz: 0.2 }
     },
     bassboost: {
         equalizer: Array(6).fill(0.22)
