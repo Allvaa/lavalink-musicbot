@@ -8,6 +8,10 @@ module.exports = class MusicHandler {
         this.volume = 100;
         this.loop = 0; // 0 = none; 1 = track; 2 = queue;
         this.previous = null;
+        this.nightcore = false;
+        this.vaporwave = false;
+        this._8d = false;
+        this.bassboost = false;
         this.current = null;
         this.queue = [];
         /** @type {import("discord.js").TextChannel|null} */
@@ -38,6 +42,9 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
+        this.nightcore = false;
+        this.vaporwave = false;
+        this._8d = false;
         this.textChannel = null;
     }
 
@@ -115,6 +122,9 @@ module.exports = class MusicHandler {
         if (!this.player) return;
         this.loop = 0;
         this.queue = [];
+        this.vaporwave = false;
+        this.nightcore = false;
+        this._8d = false;
         await this.skip();
     }
 
@@ -124,5 +134,88 @@ module.exports = class MusicHandler {
         if (isNaN(parsed)) return;
         await this.player.volume(parsed);
         this.volume = newVol;
+    }
+    async setNightcore(val) {
+        if(val === true){
+            this.vaporwave = false;
+            this._8d = false;
+            this.bassboost = false;
+            this.player.node.send({
+                op: "filters",
+                guildId: this.guild.id || this.guild,
+                timescale: { speed: 1.1999999523162842, pitch: 1.2999999523163953, rate: 1 },
+            });
+            this.nightcore = true;
+        }
+        else if(val === false){
+            this.player.node.send({
+                op: "filters",
+                guildId: this.guild.id || this.guild,
+            });
+            this.nightcore = false;
+        }
+        else return;
+    }
+
+    async setVaporwave(val) {
+        if(val === true){
+            this.nightcore = false;
+            this._8d = false;
+            this.bassboost = false;
+            this.player.node.send({
+                op: "filters",
+                guildId: this.guild.id || this.guild,
+                timescale: { speed:0.8500000238418579, pitch: 0.800000011920929, rate: 1 },
+            });
+            this.vaporwave = true;
+        }
+        else if(val === false){
+            this.player.node.send({
+                op: "filters",
+                guildId: this.guild.id || this.guild,
+            });
+            this.vaporwave = false;
+        }
+        else return;
+    }
+
+    async set8D(val) {
+        if(val === true){
+            this.vaporwave = false;
+            this.nightcore = false;
+            this.bassboost = false;
+            this.player.node.send({
+                op: "filters",
+                guildId: this.guild.id || this.guild,
+                rotation : { rotationHz: 0.29999 },
+            });
+            this._8d = true;
+        }
+        else if(val === false){
+            this.player.node.send({
+                op: "filters",
+                guildId: this.guild.id || this.guild,
+            });
+            this._8d = false;
+        }
+        else return;
+    }
+
+    async setBassboost(bassboost) {
+        if (bassboost) {
+            this.nightcore = false;
+            this.vaporwave = false;
+            this._8d = false;
+            this.set8D(false);
+            this.setNightcore(false);
+            this.setNightcore(false);
+            this.player.equalizer(Array(3).fill(null).map((n, i) => ({ band: i, gain: bassboost })));
+            this.bassboost = bassboost;
+        } else this.player.node.send({
+            op: "filters",
+            guildId: this.guild.id || this.guild,
+        });
+        this.bassboost = bassboost;
+        return this;
     }
 };
