@@ -1,5 +1,6 @@
 const Rest = require("./Rest");
 const util = require("../util");
+const FiltersValues = require("../constants/FiltersValues");
 
 module.exports = class MusicHandler {
     /** @param {import("discord.js").Guild} guild */
@@ -8,12 +9,16 @@ module.exports = class MusicHandler {
         this.volume = 100;
         this.loop = 0; // 0 = none; 1 = track; 2 = queue;
         this.previous = null;
-        this.nightcore = false;
-        this.vaporwave = false;
-        this._8d = false;
-        this.bassboost = false;
         this.current = null;
         this.queue = [];
+        this.filters = {
+            doubleTime: false,
+            nightcore: false,
+            vaporwave: false,
+            "8d": false,
+            bassboost: false
+        };
+        this.bassboost = 0;
         /** @type {import("discord.js").TextChannel|null} */
         this.textChannel = null;
         this.shouldSkipCurrent = false;
@@ -42,10 +47,11 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
-        this.nightcore = false;
-        this.vaporwave = false;
-        this._8d = false;
         this.textChannel = null;
+        for (const filter of Object.keys(this.filters)) {
+            this.filters[filter] = false;
+        }
+        this.bassboost = 0;
     }
 
     /** @param {import("discord.js").VoiceChannel} voice */
@@ -135,87 +141,66 @@ module.exports = class MusicHandler {
         await this.player.volume(parsed);
         this.volume = newVol;
     }
+
+    async setDoubleTime(val) {
+        if (!this.player) return;
+        this.filters.doubleTime = val;
+        if (val) {
+            this.filters.nightcore = false;
+            this.filters.vaporwave = false;
+        }
+        await this.sendFilters();
+    }
+
     async setNightcore(val) {
-        if(val === true){
-            this.vaporwave = false;
-            this._8d = false;
-            this.bassboost = false;
-            this.player.node.send({
-                op: "filters",
-                guildId: this.guild.id || this.guild,
-                timescale: { speed: 1.1999999523162842, pitch: 1.2999999523163953, rate: 1 },
-            });
-            this.nightcore = true;
+        if (!this.player) return;
+        this.filters.nightcore = val;
+        if (val) {
+            this.filters.doubleTime = false;
+            this.filters.vaporwave = false;
         }
-        else if(val === false){
-            this.player.node.send({
-                op: "filters",
-                guildId: this.guild.id || this.guild,
-            });
-            this.nightcore = false;
-        }
-        else return;
+        await this.sendFilters();
     }
 
     async setVaporwave(val) {
-        if(val === true){
-            this.nightcore = false;
-            this._8d = false;
-            this.bassboost = false;
-            this.player.node.send({
-                op: "filters",
-                guildId: this.guild.id || this.guild,
-                timescale: { speed:0.8500000238418579, pitch: 0.800000011920929, rate: 1 },
-            });
-            this.vaporwave = true;
+        if (!this.player) return;
+        this.filters.vaporwave = val;
+        if (val) {
+            this.filters.doubleTime = false;
+            this.filters.nightcore = false;
         }
-        else if(val === false){
-            this.player.node.send({
-                op: "filters",
-                guildId: this.guild.id || this.guild,
-            });
-            this.vaporwave = false;
-        }
-        else return;
+        await this.sendFilters();
     }
 
     async set8D(val) {
-        if(val === true){
-            this.vaporwave = false;
-            this.nightcore = false;
-            this.bassboost = false;
-            this.player.node.send({
-                op: "filters",
-                guildId: this.guild.id || this.guild,
-                rotation : { rotationHz: 0.29999 },
-            });
-            this._8d = true;
-        }
-        else if(val === false){
-            this.player.node.send({
-                op: "filters",
-                guildId: this.guild.id || this.guild,
-            });
-            this._8d = false;
-        }
-        else return;
+        if (!this.player) return;
+        this.filters["8d"] = val;
+        await this.sendFilters();
     }
 
-    async setBassboost(bassboost) {
-        if (bassboost) {
-            this.nightcore = false;
-            this.vaporwave = false;
-            this._8d = false;
-            this.set8D(false);
-            this.setNightcore(false);
-            this.setNightcore(false);
-            this.player.equalizer(Array(3).fill(null).map((n, i) => ({ band: i, gain: bassboost })));
-            this.bassboost = bassboost;
-        } else this.player.node.send({
+    async setBassboost(val) {
+        if (!this.player) return;
+        this.filters.bassboost = !!val;
+        this.bassboost = val / 100;
+        await this.sendFilters();
+    }
+
+    async sendFilters() {
+        if (!this.player) return;
+        const filters = {};
+        for (const [filter, enabled] of Object.entries(this.filters)) {
+            if (enabled && FiltersValues[filter]) {
+                const filterValue = { ...FiltersValues[filter] };
+                if (filter === "bassboost") {
+                    filterValue.equalizer = filterValue.equalizer.map((x, i) => ({ band: i, gain: x * this.bassboost }));
+                }
+                Object.assign(filters, filterValue);
+            }
+        }
+        await this.player.node.send({
             op: "filters",
-            guildId: this.guild.id || this.guild,
+            guildId: this.guild.id,
+            ...filters
         });
-        this.bassboost = bassboost;
-        return this;
     }
 };

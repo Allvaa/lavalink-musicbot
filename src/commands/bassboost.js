@@ -12,15 +12,15 @@ module.exports = {
             return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
 
         if (!args[0]) {
-            msg.channel.send(util.embed().setDescription(`${music.bassboost ? `✅ | BassBoost **${music.bassboost * 100}%**` : "❌ | BassBoost **off**"}`));
+            msg.channel.send(util.embed().setDescription(`${music.filters.bassboost ? `✅ | BassBoost **${music.bassboost * 100}%**` : "❌ | BassBoost **off**"}`));
         } else if (args[0].toLowerCase() == "off") {
-            music.setBassboost(false);
+            music.setBassboost(0);
             msg.react("✅").catch(e => e);
         } else {
-            if (isNaN(args[0])) return msg.channel.send(util.embed().setDescription("❌ | Specify A Number"));
-            if (args[0] > 1000 || args[0] < 0) return msg.channel.send(util.embed().setDescription("❌ | You can only set the bassboost from 1 to 1000."));
-            music.setBassboost(parseInt(args[0]) / 100);
-            msg.channel.send(util.embed().setDescription(`✅ | Bassboot Set To: **${music.bassboost * 100}%**`));
+            if (isNaN(args[0])) return msg.channel.send(util.embed().setDescription("❌ | Specify a number"));
+            if (args[0] < 1 || args[0] > 100) return msg.channel.send(util.embed().setDescription("❌ | You can only set the bassboost from 1 to 100."));
+            music.setBassboost(parseInt(args[0]));
+            msg.channel.send(util.embed().setDescription(`✅ | BassBoost set to **${music.bassboost * 100}%**`));
         }
     }
 };
