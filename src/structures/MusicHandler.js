@@ -128,9 +128,6 @@ module.exports = class MusicHandler {
         if (!this.player) return;
         this.loop = 0;
         this.queue = [];
-        this.vaporwave = false;
-        this.nightcore = false;
-        this._8d = false;
         await this.skip();
     }
 
