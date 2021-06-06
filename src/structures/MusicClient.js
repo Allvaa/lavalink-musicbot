@@ -46,12 +46,24 @@ module.exports = class MusicClient extends Client {
 
     /** @private */
     async loadCommands() {
+        console.log("Lodaing CMDS...")
+        const ascii = require('ascii-table')
+let table = new ascii("Commands");
+table.setHeading('Command', "Aliases", 'Status');
         const commands = await readdir(join(__dirname, "..", "commands"));
         for (const commandFile of commands) {
             const command = require(`../commands/${commandFile}`);
+            if (command.name) {
             this.commands.set(command.name, command);
+			table.addRow(commandFile,command.aliases,'🆗')}
+			else {
+                table.addRow(commandFile,command.aliases,'🈶')
+                continue;
+            }
+            
         }
     }
+   
 
     /** @private */
     async loadEventListeners() {
