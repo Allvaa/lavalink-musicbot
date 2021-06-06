@@ -60,8 +60,8 @@ table.setHeading('Command', "Aliases", 'Status');
                 table.addRow(commandFile,command.aliases,'🈶')
                 continue;
             }
-            
         }
+	    console.log(table.toString())
     }
    
 
