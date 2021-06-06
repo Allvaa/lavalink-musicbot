@@ -66,9 +66,15 @@ module.exports = class MusicHandler {
                 if (this.shouldSkipCurrent) this.shouldSkipCurrent = false;
 
                 if (!this.queue.length) {
-                    this.client.manager.leave(this.guild.id);
-                    if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
-                    this.reset();
+                     setTimeout(() => { 
+      if (!this.queue.length && this.player && !this.player.playing) 
+          this.client.manager.leave(this.guild.id); 
+          if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty.Nothing was Played So Leaving voice channel.."));
+       this.client.manager.leave(this.guild.id); 
+       this.reset();
+       
+     }, 2700000); 
+                    
                     return;
                 }
                 this.start();
