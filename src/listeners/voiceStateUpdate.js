@@ -2,6 +2,7 @@ module.exports = {
     name: "voiceStateUpdate",
     exec: async (client, oldState, newState) => {
         // if the member was not cached
+        try {
         if (!newState.member) await newState.guild.members.fetch(newState.id);
 
         const { guild: { music } } = newState;
@@ -9,5 +10,6 @@ module.exports = {
             if (music.player.playing) await music.stop();
             if (music.player) await client.manager.leave(music.guild.id);
         }
+    } catch (e) {}        
     }
 };
