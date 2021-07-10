@@ -23,7 +23,7 @@ module.exports = {
             if (duration && !isNaN(duration)) {
                 if (music.player.state.position - duration * 1000 < music.current.info.length) {
                     music.player.seek(music.player.state.position - duration * 1000);
-                    return msg.channel.send(util.embed().setDescription(`${util.millisToDuration(durationMs)}`));
+                    return msg.channel.send(util.embed().setDescription(`Rewinded to ${util.millisToDuration(durationMs)}`));
                 } else {
                     return msg.channel.send(util.embed().setDescription("❌ | The duration you provide exceeds the duration of the current track."));                
                 }
@@ -34,7 +34,7 @@ module.exports = {
             if (!duration) {
                 if (music.player.state.position - rdnumber * 1000 < music.current.info.length) {
                     music.player.seek(music.player.state.position - rdnumber * 1000);
-                    msg.react("⏩");
+                    msg.react("⏪");
                 } else {
                     return msg.channel.send(util.embed().setDescription("❌ | The duration you provide exceeds the duration of the current track."));                
                 }
