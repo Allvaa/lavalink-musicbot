@@ -19,7 +19,7 @@ module.exports = {
         try {
             const rdnumber = 10;
             const duration = args[0];
-            const durationMs = util.durationToMillis(duration);
+            const durationMs = music.player.state.position - duration * 1000;
             if (duration && !isNaN(duration)) {
                 if (music.player.state.position - duration * 1000 < music.current.info.length) {
                     music.player.seek(music.player.state.position - duration * 1000);
