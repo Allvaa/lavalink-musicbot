@@ -586,10 +586,10 @@ lavacord@1.1.9:
     node-fetch "^2.6.0"
     ws "^7.3.0"
 
-lavasfy@^2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/lavasfy/-/lavasfy-2.2.1.tgz#e5331f82651e561cefae776fe4c90634329344cd"
-  integrity sha512-7zCntk7MN/wfvZyBiJcKL+z3BU+4d8ZSx6MaUe1sxhNcYMNiWfc2MPdAde/CQsgOlXhO+5joNiWOb2RU2+Pc8A==
+lavasfy@2.3.0:
+  version "2.3.0"
+  resolved "https://registry.yarnpkg.com/lavasfy/-/lavasfy-2.3.0.tgz#31ae6937f8ad76bfc20b61d44616f2f2638afaf9"
+  integrity sha512-3nFlxifCcFBl+qHSiux/ywUly4gVEweBbMbWHXci2QyzTIEtn0mBKFnrjKTCMy/kGaZQrHBUho3bCg7/kNX9Cg==
   dependencies:
     node-superfetch "^0.2.2"
 
