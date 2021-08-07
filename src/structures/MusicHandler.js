@@ -1,5 +1,6 @@
 const Rest = require("./Rest");
 const util = require("../util");
+const FiltersValues = require("../constants/FiltersValues");
 
 module.exports = class MusicHandler {
     /** @param {import("discord.js").Guild} guild */
@@ -10,6 +11,14 @@ module.exports = class MusicHandler {
         this.previous = null;
         this.current = null;
         this.queue = [];
+        this.filters = {
+            doubleTime: false,
+            nightcore: false,
+            vaporwave: false,
+            "8d": false,
+            bassboost: false
+        };
+        this.bassboost = 0;
         /** @type {import("discord.js").TextChannel|null} */
         this.textChannel = null;
         this.shouldSkipCurrent = false;
@@ -39,6 +48,10 @@ module.exports = class MusicHandler {
         this.current = null;
         this.queue = [];
         this.textChannel = null;
+        for (const filter of Object.keys(this.filters)) {
+            this.filters[filter] = false;
+        }
+        this.bassboost = 0;
     }
 
     /** @param {import("discord.js").VoiceChannel} voice */
@@ -124,5 +137,67 @@ module.exports = class MusicHandler {
         if (isNaN(parsed)) return;
         await this.player.volume(parsed);
         this.volume = newVol;
+    }
+
+    async setDoubleTime(val) {
+        if (!this.player) return;
+        this.filters.doubleTime = val;
+        if (val) {
+            this.filters.nightcore = false;
+            this.filters.vaporwave = false;
+        }
+        await this.sendFilters();
+    }
+
+    async setNightcore(val) {
+        if (!this.player) return;
+        this.filters.nightcore = val;
+        if (val) {
+            this.filters.doubleTime = false;
+            this.filters.vaporwave = false;
+        }
+        await this.sendFilters();
+    }
+
+    async setVaporwave(val) {
+        if (!this.player) return;
+        this.filters.vaporwave = val;
+        if (val) {
+            this.filters.doubleTime = false;
+            this.filters.nightcore = false;
+        }
+        await this.sendFilters();
+    }
+
+    async set8D(val) {
+        if (!this.player) return;
+        this.filters["8d"] = val;
+        await this.sendFilters();
+    }
+
+    async setBassboost(val) {
+        if (!this.player) return;
+        this.filters.bassboost = !!val;
+        this.bassboost = val / 100;
+        await this.sendFilters();
+    }
+
+    async sendFilters() {
+        if (!this.player) return;
+        const filters = {};
+        for (const [filter, enabled] of Object.entries(this.filters)) {
+            if (enabled && FiltersValues[filter]) {
+                const filterValue = { ...FiltersValues[filter] };
+                if (filter === "bassboost") {
+                    filterValue.equalizer = filterValue.equalizer.map((x, i) => ({ band: i, gain: x * this.bassboost }));
+                }
+                Object.assign(filters, filterValue);
+            }
+        }
+        await this.player.node.send({
+            op: "filters",
+            guildId: this.guild.id,
+            ...filters
+        });
     }
 };
