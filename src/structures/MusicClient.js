@@ -4,12 +4,11 @@ const { promises: { readdir } } = require("fs");
 const { join } = require("path");
 const { LavasfyClient } = require("lavasfy");
 
-require("../extensions");
-
 module.exports = class MusicClient extends Client {
     /** @param {import("discord.js").ClientOptions} [opt] */
     constructor(opt) {
         super(opt);
+        this.musics = new Collection();
         this.commands = new Collection();
         this.manager = new Manager(this, [
             {
@@ -25,7 +24,8 @@ module.exports = class MusicClient extends Client {
                 clientSecret: process.env.SPOTIFY_SECRET,
                 playlistLoadLimit: process.env.SPOTIFY_PLAYLIST_PAGE_LIMIT,
                 audioOnlyResults: true,
-                useSpotifyMetadata: true
+                useSpotifyMetadata: true,
+                autoResolve: true
             }, [...[...this.manager.nodes.values()]])
             : null;
 

@@ -10,15 +10,15 @@ const getLyrics = async (query) => {
 module.exports = {
     name: "lyrics",
     aliases: ["ly"],
-    exec: async (msg, args) => {
+    exec: async (ctx, args) => {
         let query;
         if (args.length) {
             query = args.join(" ");
-        } else if (msg.guild.music.current) {
-            const separatedArtistAndTitle = /(.+) - (.+)/.test(msg.guild.music.current.info.title);
-            query = `${separatedArtistAndTitle ? msg.guild.music.current.info.title : msg.guild.music.current.info.author.replace(" - Topic", "")} - ${msg.guild.music.current.info.title}`;
+        } else if (ctx.music.current) {
+            const separatedArtistAndTitle = /(.+) - (.+)/.test(ctx.music.current.info.title);
+            query = `${separatedArtistAndTitle ? ctx.music.current.info.title : ctx.music.current.info.author.replace(" - Topic", "")} - ${ctx.music.current.info.title}`;
         } else {
-            return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
+            return ctx.respond(util.embed().setDescription("❌ | Missing args."));
         }
 
         try {
@@ -33,11 +33,11 @@ module.exports = {
                 .setDescription(splittedLyrics[0])
                 .setFooter(`Page 1 of ${splittedLyrics.length}.`);
 
-            const lyricsMsg = await msg.channel.send(embed);
-            if (splittedLyrics.length > 1) await util.pagination(lyricsMsg, msg.author, splittedLyrics);
+            const lyricsctx = await ctx.respond(embed);
+            if (splittedLyrics.length > 1) await util.pagination(lyricsctx, ctx.author, splittedLyrics);
         } catch (e) {
-            if (e.message === "Sorry I couldn't find that song's lyrics") msg.channel.send(util.embed().setDescription(`❌ | ${e.message}`));
-            else msg.channel.send(`An error occured: ${e.message}.`);   
+            if (e.message === "Sorry I couldn't find that song's lyrics") ctx.respond(util.embed().setDescription(`❌ | ${e.message}`));
+            else ctx.respond(`An error occured: ${e.message}.`);   
         }
     }
 };

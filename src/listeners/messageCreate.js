@@ -1,5 +1,7 @@
+const CommandContext = require("../structures/CommandContext");
+
 module.exports = {
-    name: "message",
+    name: "messageCreate",
     exec: async (client, msg) => {
         if (!msg.guild) return;
         if (msg.author.bot) return;     
@@ -12,7 +14,7 @@ module.exports = {
         const command = client.commands.get(commandName) || client.commands.find(c => c.aliases && c.aliases.includes(commandName));
         if (command) {
             try {
-                await command.exec(msg, args);
+                await command.exec(new CommandContext(command, msg, args));
             } catch (e) {
                 console.error(e);
             }

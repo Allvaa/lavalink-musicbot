@@ -3,12 +3,12 @@ const util = require("../util");
 
 module.exports = {
     name: "stats",
-    exec: (msg) => {
+    exec: (ctx) => {
         /** @type {import("lavacord").LavalinkNode[]} */
-        const nodes = [...msg.client.manager.nodes.values()];
+        const nodes = [...ctx.client.manager.nodes.values()];
 
-        msg.channel.send(util.embed()
-            .setAuthor("Lavalink Node(s) Stats", msg.client.user.displayAvatarURL())
+        ctx.respond(util.embed()
+            .setAuthor("Lavalink Node(s) Stats", ctx.client.user.displayAvatarURL())
             .setTitle("Source Code")
             .setURL("https://github.com/Allvaa/lavalink-musicbot")
             .setDescription(

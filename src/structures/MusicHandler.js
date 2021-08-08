@@ -66,7 +66,7 @@ module.exports = class MusicHandler {
         this.player
             .on("start", () => {
                 this.current = this.queue.shift();
-                if (this.textChannel) this.textChannel.send(util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`));
+                if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`)]});
             })
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
@@ -80,7 +80,7 @@ module.exports = class MusicHandler {
 
                 if (!this.queue.length) {
                     this.client.manager.leave(this.guild.id);
-                    if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
+                    if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ | Queue is empty. Leaving voice channel..")]});
                     this.reset();
                     return;
                 }

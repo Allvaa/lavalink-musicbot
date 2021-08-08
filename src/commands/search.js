@@ -2,31 +2,31 @@ const util = require("../util");
 
 module.exports = {
     name: "search",
-    exec: async (msg, args) => {
-        const { music } = msg.guild;
-        if (!msg.member.voice.channel)
-            return msg.channel.send(util.embed().setDescription("❌ | You must be on a voice channel."));
-        if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
-            return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
+    exec: async (ctx) => {
+        const { music, args } = ctx;
+        if (!ctx.member.voice.channel)
+            return ctx.respond(util.embed().setDescription("❌ | You must be on a voice channel."));
+        if (ctx.guild.me.voice.channel && !ctx.guild.me.voice.channel.equals(ctx.member.voice.channel))
+            return ctx.respond(util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`));
 
-        const missingPerms = util.missingPerms(msg.guild.me.permissionsIn(msg.member.voice.channel), ["CONNECT", "SPEAK"]);
+        const missingPerms = util.missingPerms(ctx.guild.me.permissionsIn(ctx.member.voice.channel), ["CONNECT", "SPEAK"]);
         if ((!music.player || !music.player.playing) && missingPerms.length)
-            return msg.channel.send(util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`));
+            return ctx.respond(util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`));
 
         if (!music.node || !music.node.connected)
-            return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
+            return ctx.respond(util.embed().setDescription("❌ | Lavalink node not connected."));
 
         const query = args.join(" ");
-        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
+        if (!query) return ctx.respond(util.embed().setDescription("❌ | Missing args."));
 
         try {
             let { tracks } = await music.load(`ytsearch:${query}`);
-            if (!tracks.length) return msg.channel.send(util.embed().setDescription("❌ | Couldn't find any results."));
+            if (!tracks.length) return ctx.respond(util.embed().setDescription("❌ | Couldn't find any results."));
 
             tracks = tracks.slice(0, 10);
 
-            const resultMessage = await msg.channel.send(util.embed()
-                .setAuthor("Search Result", msg.client.user.displayAvatarURL())
+            const resultMessage = await ctx.respond(util.embed()
+                .setAuthor("Search Result", ctx.client.user.displayAvatarURL())
                 .setDescription(tracks.map((x, i) => `\`${++i}.\` **${x.info.title}**`))
                 .setFooter("Select from 1 to 10 or type \"cancel\" to cancel the command."));
 
@@ -40,7 +40,7 @@ module.exports = {
                 return resultMessage.edit(util.embed().setDescription("✅ | Cancelled."));
 
             const track = tracks[response.content - 1];
-            track.requester = msg.author;
+            track.requester = ctx.author;
             music.queue.push(track);
 
             if (music.player && music.player.playing) {
@@ -49,18 +49,18 @@ module.exports = {
                 resultMessage.delete();
             }
 
-            if (!music.player) await music.join(msg.member.voice.channel);
+            if (!music.player) await music.join(ctx.member.voice.channel);
             if (!music.player.playing) await music.start();
 
-            music.setTextCh(msg.channel);
+            music.setTextCh(ctx.channel);
         } catch (e) {
-            msg.channel.send(`An error occured: ${e.message}.`);
+            ctx.respond(`An error occured: ${e.message}.`);
         }
 
         async function awaitMessages() {
             try {
-                const collector = await msg.channel.awaitMessages(
-                    m => m.author.equals(msg.author) && (/^cancel$/i.exec(m.content) || (!isNaN(parseInt(m.content, 10)) && (m.content >= 1 && m.content <= 10))),
+                const collector = await ctx.channel.awaitMessages(
+                    m => m.author.equals(ctx.author) && (/^cancel$/i.exec(m.content) || (!isNaN(parseInt(m.content, 10)) && (m.content >= 1 && m.content <= 10))),
                     {
                         time: 10000,
                         max: 1,

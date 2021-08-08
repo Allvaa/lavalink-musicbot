@@ -4,11 +4,11 @@ const { isValidURL } = require("../util");
 module.exports = {
     name: "eval",
     aliases: ["e"],
-    exec: async (msg, args) => {
-        if (msg.author.id !== process.env.OWNER_ID) return;
-        const isAsync = args.includes("--async");
-        const isSilent = args.includes("--silent");
-        const code = args.filter(e => !/^--(async|silent)$/.test(e)).join(" ");
+    exec: async (ctx) => {
+        if (ctx.author.id !== process.env.OWNER_ID) return;
+        const isAsync = ctx.args.includes("--async");
+        const isSilent = ctx.args.includes("--silent");
+        const code = ctx.args.filter(e => !/^--(async|silent)$/.test(e)).join(" ");
         try {
             let result = eval(isAsync ? `(async()=>{${code}})()` : code);
             let isResultPromise = false;
@@ -19,9 +19,9 @@ module.exports = {
             if (isSilent) return;
             let inspectedResult = inspect(result, { depth: 0 });
             if (isResultPromise) inspectedResult = `Promise<${inspectedResult}>`;
-            await msg.channel.send(`${isValidURL(inspectedResult) ? inspectedResult : `\`\`\`js\n${inspectedResult}\`\`\``}`);
+            await ctx.respond(`${isValidURL(inspectedResult) ? inspectedResult : `\`\`\`js\n${inspectedResult}\`\`\``}`);
         } catch (e) {
-            msg.channel.send(`\`\`\`js\n${e}\`\`\``);
+            ctx.respond(`\`\`\`js\n${e}\`\`\``);
         }
     }
 };

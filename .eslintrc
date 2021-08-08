@@ -6,7 +6,7 @@
     },
     "extends": "eslint:recommended",
     "parserOptions": {
-        "ecmaVersion": 10
+        "ecmaVersion": 12
     },
     "rules": {
         "indent": ["warn", 4],
