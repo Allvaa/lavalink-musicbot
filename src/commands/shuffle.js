@@ -5,7 +5,7 @@ module.exports = {
     aliases: ["sf"],
     exec: async (ctx) => {
         const { music } = ctx;
-        if (!music.player || !music.player.playing) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
+        if (!music.player?.track) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
         if (!music.queue.length) return ctx.respond(util.embed().setDescription("❌ | Queue is empty."));
         if (!ctx.member.voice.channel)
             return ctx.respond(util.embed().setDescription("❌ | You must be on a voice channel."));

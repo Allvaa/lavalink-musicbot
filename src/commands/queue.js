@@ -5,7 +5,7 @@ module.exports = {
     aliases: ["q"],
     exec: async (ctx) => {
         const { music } = ctx;
-        if (!music.player || !music.player.playing) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
+        if (!music.player?.track) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
         if (!music.queue.length) return ctx.respond(util.embed().setDescription("❌ | Queue is empty."));
 
         const queue = music.queue.map((t, i) => `\`${++i}.\` **${t.info.title}** ${t.requester}`);

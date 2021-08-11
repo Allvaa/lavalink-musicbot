@@ -6,7 +6,7 @@ module.exports = {
     exec: async (ctx) => {
         const { music, args } = ctx;
         const newVolume = parseInt(args[0], 10);
-        if (!music.player || !music.player.playing) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
+        if (!music.player?.track) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
         try {
             if (isNaN(newVolume)) {
                 ctx.respond(util.embed().setDescription(`🔉 | Current volume \`${music.volume}\`.`));

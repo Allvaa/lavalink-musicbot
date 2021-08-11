@@ -7,7 +7,7 @@ module.exports = {
         const { music, args } = ctx;
         const from = args[0] ? parseInt(args[0], 10) : null;
         const to = args[1] ? parseInt(args[1], 10) : null;
-        if (!music.player || !music.player.playing) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
+        if (!music.player?.track) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
         if (!music.queue.length) return ctx.respond(util.embed().setDescription("❌ | Queue is empty."));
 
         if (!ctx.member.voice.channel)

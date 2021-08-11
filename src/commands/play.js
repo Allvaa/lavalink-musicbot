@@ -16,32 +16,31 @@ module.exports = {
         if ((!music.player || !music.player.playing) && missingPerms.length)
             return ctx.respond(util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`));
 
-        if (!music.node || !music.node.connected)
+        if (music.node.state !== 1)
             return ctx.respond(util.embed().setDescription("❌ | Lavalink node not connected."));
 
         const query = args.join(" ") || getAttachmentURL(ctx.message);
         if (!query) return ctx.respond(util.embed().setDescription("❌ | Missing args."));
 
         try {
-            const { loadType, playlistInfo: { name }, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
+            const { type, playlistName, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
             if (!tracks.length) return ctx.respond(util.embed().setDescription("❌ | Couldn't find any results."));
             
-            if (loadType === "PLAYLIST_LOADED") {
+            if (type === "PLAYLIST") {
                 for (const track of tracks) {
                     track.requester = ctx.author;
                     music.queue.push(track);
                 }
-                ctx.respond(util.embed().setDescription(`✅ | Loaded \`${tracks.length}\` tracks from **${name}**.`));
+                ctx.respond(util.embed().setDescription(`✅ | Loaded \`${tracks.length}\` tracks from **${playlistName}**.`));
             } else {
                 const track = tracks[0];
                 track.requester = ctx.author;
                 music.queue.push(track);
-                if (music.player && music.player.playing)
+                if (music.player?.track)
                     ctx.respond(util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`));
             }
-            
             if (!music.player) await music.join(ctx.member.voice.channel);
-            if (!music.player.playing) await music.start();
+            if (!music.player.track) await music.start();
 
             music.setTextCh(ctx.channel);
         } catch (e) {

@@ -5,7 +5,7 @@ module.exports = {
     aliases: ["rm"],
     exec: async (ctx) => {
         const { music, args } = ctx;
-        if (!music.player || !music.player.playing) return ctx.respond(util.embed().setDescription("❌|  Currently not playing anything."));
+        if (!music.player?.track) return ctx.respond(util.embed().setDescription("❌|  Currently not playing anything."));
         if (!music.queue.length) return ctx.respond(util.embed().setDescription("❌ | Queue is empty."));
 
         if (!ctx.member.voice.channel)
