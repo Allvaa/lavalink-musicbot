@@ -59,8 +59,8 @@ module.exports = {
 
         async function awaitMessages() {
             try {
-                const filter = (m) => m.author.equals(ctx.author) && (/^cancel$/i.exec(m.content) || (!isNaN(parseInt(m.content, 10)) && (m.content >= 1 && m.content <= 10))),
-
+                const filter = (m) => m.author.equals(ctx.author) && (/^cancel$/i.exec(m.content) || (!isNaN(parseInt(m.content, 10)) && (m.content >= 1 && m.content <= 10)));
+                
                 const collector = await ctx.channel.awaitMessages(
                     {   
                         filter,
