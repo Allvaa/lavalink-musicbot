@@ -15,7 +15,7 @@ module.exports = class MusicClient extends Client {
                 name: "main",
                 url: `${process.env.LAVA_HOST}:${process.env.LAVA_PORT}`,
                 auth: process.env.LAVA_PASS,
-                secure: true
+                secure: process.env.LAVA_SECURE === "true"
             }
         ]);
         this.spotify = process.env.ENABLE_SPOTIFY === "true"
@@ -32,7 +32,7 @@ module.exports = class MusicClient extends Client {
                     host: process.env.LAVA_HOST,
                     port: process.env.LAVA_PORT,
                     password: process.env.LAVA_PASS,
-                    secure: true
+                    secure: process.env.LAVA_SECURE === "true"
                 }
             ])
             : null;
