@@ -60,7 +60,7 @@ module.exports = class MusicHandler {
         await this.node.joinChannel({
             channelId: voice.id,
             guildId: this.guild.id,
-            shardId: 0,
+            shardId: this.guild.shardId,
             deaf: true
         });
 
