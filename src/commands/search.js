@@ -1,4 +1,7 @@
+const { MessageActionRow, MessageSelectMenu } = require("discord.js");
 const util = require("../util");
+
+const emojiNumbers = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟"];
 
 module.exports = {
     name: "search",
@@ -13,7 +16,7 @@ module.exports = {
         if ((!music.player || !music.player.playing) && missingPerms.length)
             return ctx.respond({ embeds: [util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`)] });
 
-        if (!music.node || !music.node.connected)
+        if (music.node.state !== 1)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | Lavalink node not connected.")] });
 
         const query = args.join(" ");
@@ -27,54 +30,78 @@ module.exports = {
 
             const resultMessage = await ctx.respond({
                 embeds: [util.embed()
-                    .setAuthor("Search Result", ctx.client.user.displayAvatarURL())
-                    .setDescription(tracks.map((x, i) => `\`${++i}.\` **${x.info.title}**`))
-                    .setFooter("Select from 1 to 10 or type \"cancel\" to cancel the command.")
+                    .setAuthor("Song Selection", ctx.client.user.displayAvatarURL())
+                    .setDescription("Pick one of the search results that you would like to add to the queue")
+                    .setFooter("You can select \"cancel\" to cancel the command.")
+                ],
+                components: [
+                    new MessageActionRow()
+                        .addComponents(
+                            new MessageSelectMenu()
+                                .setCustomId("selected")
+                                .setPlaceholder("Nothing selected")
+                                .addOptions([
+                                    ...tracks
+                                        .map((x, i) => (
+                                            {
+                                                label: x.info.title,
+                                                description: x.info.author,
+                                                value: i.toString(),
+                                                emoji: emojiNumbers[i]
+                                            }
+                                        )),
+                                    ...[
+                                        {
+                                            label: "Cancel",
+                                            description: "Cancel selection",
+                                            value: "10",
+                                            emoji: "❌"
+                                        }
+                                    ]
+                                ])
+                        )
                 ]
             });
 
-            const collector = await awaitMessages();
-            if (!collector) return resultMessage.edit({ embeds: [util.embed().setDescription("❌ | Time is up!")] });
-            const response = collector.first();
+            const selected = await awaitSelection();
+            if (!selected) return resultMessage.edit({ embeds: [util.embed().setDescription("❌ | Time is up!")] });
+            await selected.deferUpdate();
 
-            if (response.deletable) response.delete();
+            if (selected.values[0] === "10")
+                return selected.editReply({ embeds: [util.embed().setDescription("✅ | Cancelled.")], components: [] });
 
-            if (/^cancel$/i.exec(response.content))
-                return resultMessage.edit({ embeds: [util.embed().setDescription("✅ | Cancelled.")] });
-
-            const track = tracks[response.content - 1];
+            const track = tracks[selected.values[0]];
             track.requester = ctx.author;
             music.queue.push(track);
 
-            if (music.player && music.player.playing) {
-                resultMessage.edit({ embeds: [util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`)] });
+            if (music.player?.track) {
+                selected.editReply({ embeds: [util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`)], components: [] });
             } else {
-                resultMessage.delete();
+                selected.deleteReply();
             }
 
             if (!music.player) await music.join(ctx.member.voice.channel);
             if (!music.player.playing) await music.start();
 
             music.setTextCh(ctx.channel);
+
+            // eslint-disable-next-line no-inner-declarations
+            async function awaitSelection() {
+                try {
+                    const selected = await resultMessage.awaitMessageComponent(
+                        {   
+                            filter: interaction => interaction.user.equals(ctx.author),
+                            time: 15000,
+                            componentType: "SELECT_MENU"
+                        }
+                    );
+                    return selected;
+                } catch {
+                    return null;
+                }
+            }
         } catch (e) {
             ctx.respond(`An error occured: ${e.message}.`);
-        }
-
-        async function awaitMessages() {
-            try {
-                const filter = (m) => m.author.equals(ctx.author) && (/^cancel$/i.exec(m.content) || (!isNaN(parseInt(m.content, 10)) && (m.content >= 1 && m.content <= 10)));
-                const collector = await ctx.channel.awaitMessages(
-                    {   
-                        filter,
-                        time: 10000,
-                        max: 1,
-                        errors: ["time"]
-                    }
-                );
-                return collector;
-            } catch {
-                return null;
-            }
         }
     }
 };
