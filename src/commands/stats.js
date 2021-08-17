@@ -5,9 +5,9 @@ module.exports = {
     name: "stats",
     exec: (ctx) => {
         /** @type {import("lavacord").LavalinkNode[]} */
-        const nodes = [...ctx.client.manager.nodes.values()];
+        const nodes = [...ctx.client.shoukaku.nodes.values()];
 
-        ctx.respond(util.embed()
+        ctx.respond({ embeds: [util.embed()
             .setAuthor("Lavalink Node(s) Stats", ctx.client.user.displayAvatarURL())
             .setTitle("Source Code")
             .setURL("https://github.com/Allvaa/lavalink-musicbot")
@@ -18,16 +18,16 @@ module.exports = {
                     const uptime = prettyMs(node.stats.uptime, { verbose: true, secondsDecimalDigits: 0 });
 
                     return `\`\`\`asciidoc
-ID        :: ${node.id}
-Status    :: ${node.connected ? "Connected" : "Disconnected"}
-${node.connected ? `
+ID        :: ${node.name}
+Status    :: ${node.state === 1 ? "Connected" : "Disconnected"}
+${node.state === 1 ? `
 CPU Load  :: ${cpuLoad}%
 Mem Usage :: ${memUsage} MB
 Uptime    :: ${uptime}
 Players   :: ${node.stats.playingPlayers} of ${node.stats.players} playing` : ""}\`\`\``;
-                })
+                }).join("\n")
             )
             .setTimestamp()
-        );
+        ] });
     }
 };

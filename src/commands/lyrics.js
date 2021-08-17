@@ -18,7 +18,7 @@ module.exports = {
             const separatedArtistAndTitle = /(.+) - (.+)/.test(ctx.music.current.info.title);
             query = `${separatedArtistAndTitle ? ctx.music.current.info.title : ctx.music.current.info.author.replace(" - Topic", "")} - ${ctx.music.current.info.title}`;
         } else {
-            return ctx.respond(util.embed().setDescription("❌ | Missing args."));
+            return ctx.respond({ embeds: [util.embed().setDescription("❌ | Missing args.")] });
         }
 
         try {
@@ -36,7 +36,7 @@ module.exports = {
             const lyricsctx = await ctx.respond(embed);
             if (splittedLyrics.length > 1) await util.pagination(lyricsctx, ctx.author, splittedLyrics);
         } catch (e) {
-            if (e.message === "Sorry I couldn't find that song's lyrics") ctx.respond(util.embed().setDescription(`❌ | ${e.message}`));
+            if (e.message === "Sorry I couldn't find that song's lyrics") ctx.respond({ embeds: [util.embed().setDescription(`❌ | ${e.message}`)] });
             else ctx.respond(`An error occured: ${e.message}.`);   
         }
     }

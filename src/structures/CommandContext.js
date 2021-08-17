@@ -1,4 +1,3 @@
-const { MessageEmbed } = require("discord.js");
 const MusicHandler = require("./MusicHandler");
 
 module.exports = class CommandContext {
@@ -38,6 +37,6 @@ module.exports = class CommandContext {
     }
 
     respond(opt) {
-        this.channel.send(opt instanceof MessageEmbed ? { embeds: [opt] } : opt);
+        this.channel.send(opt);
     }
 };

@@ -2,7 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "resume",
-    exec: async (ctx) => {
+    exec: (ctx) => {
         const { music } = ctx;
         if (!music.player?.track) return ctx.respond(util.embed().setDescription("❌|  Currently not playing anything."));
         if (!ctx.member.voice.channel)
@@ -11,8 +11,10 @@ module.exports = {
             return ctx.respond(util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`));
 
         try {
-            await music.resume();
-            ctx.react("▶️").catch(e => e);
+            music.resume();
+            ctx.respond({
+                embeds: [util.embed().setDescription("▶️ | Resumed")]
+            });
         } catch (e) {
             ctx.respond(`An error occured: ${e.message}.`);
         }

@@ -20,25 +20,33 @@ module.exports = {
     aliases: ["repeat"],
     exec: (ctx) => {
         const { music, args } = ctx;
-        if (!music.player) return ctx.respond(util.embed().setDescription("❌ | Currently not playing anything."));
+        if (!music.player) return ctx.respond({
+            embeds: [util.embed().setDescription("❌ | Currently not playing anything.")]
+        });
         if (args[0]) {
             if (!ctx.member.voice.channel)
-                return ctx.respond(util.embed().setDescription("❌ | You must be on a voice channel."));
+                return ctx.respond({
+                    embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")]
+                });
             if (ctx.guild.me.voice.channel && !ctx.guild.me.voice.channel.equals(ctx.member.voice.channel))
-                return ctx.respond(util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`));
+                return ctx.respond({
+                    embeds: [util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`)]
+                });
 
             const loopMode = aliases[args[0].toLowerCase()];
             if (loopMode && modes.includes(loopMode)) {
                 music.loop = modes.indexOf(loopMode);
-                ctx.respond(util.embed().setDescription(music.loop === 0 ? "✅ | Loop disabled." : `✅ | Set loop to ${modes[music.loop]}.`));
+                ctx.respond({
+                    embeds: util.embed().setDescription(music.loop === 0 ? "✅ | Loop disabled." : `✅ | Set loop to ${modes[music.loop]}.`)
+                });
             } else {
-                ctx.respond(
-                    util.embed()
+                ctx.respond({
+                    embeds: util.embed()
                         .setDescription("❌ | Invalid loop mode. Try single/all/off.")
-                );
+                });
             }
         } else {
-            ctx.respond(util.embed().setDescription(`✅ | Current loop mode: ${modes[music.loop]}`));
+            ctx.respond({ embeds: [util.embed().setDescription(`✅ | Current loop mode: ${modes[music.loop]}`)] });
         }
     }
 };

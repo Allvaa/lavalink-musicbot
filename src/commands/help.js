@@ -1,6 +1,6 @@
 const util = require("../util");
 
-const unlisted = ["eval", "source"];
+const unlisted = ["eval"];
 
 module.exports = {
     name: "help",
