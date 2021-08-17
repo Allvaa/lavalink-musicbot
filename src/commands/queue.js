@@ -25,11 +25,13 @@ module.exports = {
                         ? [
                             new MessageActionRow()
                                 .addComponents(
-                                    ...util.paginationEmojis.map((x, i) => new MessageButton({
-                                        customId: x,
-                                        emoji: x,
-                                        style: i === 1 ? "DANGER" : "PRIMARY"
-                                    })))
+                                    ...util.paginationEmojis.map((x, i) =>
+                                        new MessageButton()
+                                            .setCustomId(x)
+                                            .setEmoji(x)
+                                            .setStyle(i === 1 ? "DANGER" : "PRIMARY")
+                                    )
+                                )
                         ]
                         : []
             });
