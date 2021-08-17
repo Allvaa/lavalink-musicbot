@@ -24,7 +24,7 @@ module.exports = {
 
         if (music.node.state !== 1)
             return ctx.respond({
-                embeds: [util.embed().setDescription("❌ | Lavalink node not connected.")]
+                embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")]
             });
 
         const query = args.join(" ") || getAttachmentURL(ctx.message);

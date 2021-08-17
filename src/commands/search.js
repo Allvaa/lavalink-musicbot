@@ -17,7 +17,7 @@ module.exports = {
             return ctx.respond({ embeds: [util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`)] });
 
         if (music.node.state !== 1)
-            return ctx.respond({ embeds: [util.embed().setDescription("❌ | Lavalink node not connected.")] });
+            return ctx.respond({ embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")] });
 
         const query = args.join(" ");
         if (!query) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Missing args.")] });
