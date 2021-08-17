@@ -1,3 +1,4 @@
+const { MessageButton, MessageActionRow } = require("discord.js");
 const util = require("../util");
 
 module.exports = {
@@ -17,8 +18,22 @@ module.exports = {
             .setFooter(`Page 1 of ${chunked.length}.`);
 
         try {
-            const queuectx = await ctx.respond({embeds: [embed] });
-            if (chunked.length > 1) await util.pagination(queuectx, ctx.author, chunked);
+            const queueMsg = await ctx.respond({
+                embeds: [embed],
+                components:
+                    chunked.length > 1
+                        ? [
+                            new MessageActionRow()
+                                .addComponents(
+                                    ...util.paginationEmojis.map((x, i) => new MessageButton({
+                                        customId: x,
+                                        emoji: x,
+                                        style: i === 1 ? "DANGER" : "PRIMARY"
+                                    })))
+                        ]
+                        : []
+            });
+            if (chunked.length > 1) util.pagination(queueMsg, ctx.author, chunked);
         } catch (e) {
             ctx.respond(`An error occured: ${e.message}.`);
         }

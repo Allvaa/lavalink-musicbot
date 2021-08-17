@@ -1,4 +1,4 @@
-const { MessageEmbed, Permissions } = require("discord.js");
+const { MessageEmbed, Permissions, MessageActionRow } = require("discord.js");
 const prettyMilliseconds = require("pretty-ms");
 
 module.exports = class Util {
@@ -40,36 +40,37 @@ module.exports = class Util {
         return ["◀", "⛔", "▶"];
     }
 
-    static async pagination(msg, author, contents, init = true, currPage = 0) {
-        if (init) for (const emoji of this.paginationEmojis) await msg.react(emoji);
-
-        const collector = msg.createReactionCollector((reaction, user) => {
-            return this.paginationEmojis.includes(reaction.emoji.name) && user.id === author.id;
-        }, {
+    static async pagination(msg, author, contents, currPage = 0) {
+        /** @type {import("discord.js").InteractionCollector} */
+        const collector = msg.createMessageComponentCollector({
+            filter: interaction => this.paginationEmojis.includes(interaction.customId) && interaction.user.id === author.id,
+            componentType: "BUTTON",
             max: 1,
-            time: 30000
+            time: 15000
         });
 
         collector
-            .on("collect", (reaction) => {
-                reaction.users.remove(author);
-
-                const emoji = reaction.emoji.name;
+            .on("collect", async (interaction) => {
+                await interaction.deferUpdate();
+                const emoji = interaction.customId;
                 if (emoji === this.paginationEmojis[0]) currPage--;
-                if (emoji === this.paginationEmojis[1]) return collector.stop();
+                if (emoji === this.paginationEmojis[1]) {
+                    await interaction.editReply({ components: [new MessageActionRow().addComponents(...interaction.message.components[0].components.map(x => x.setDisabled(true)))] });
+                    return;
+                }
                 if (emoji === this.paginationEmojis[2]) currPage++;
                 currPage = ((currPage % contents.length) + contents.length) % contents.length;
 
-                const embed = msg.embeds[0]
+                const embed = interaction.message.embeds[0]
                     .setDescription(contents[currPage])
                     .setFooter(`Page ${currPage + 1} of ${contents.length}.`);
 
-                msg.edit(embed);
+                await interaction.editReply({ embeds: [embed] });
 
-                this.pagination(msg, author, contents, false, currPage);
+                this.pagination(msg, author, contents, currPage);
             })
-            .on("end", (_, reason) => {
-                if (["time", "user"].includes(reason)) msg.reactions.removeAll();
+            .on("end", () => {
+                msg.edit({ components: [new MessageActionRow().addComponents(...msg.components[0].components.map(x => x.setDisabled(true)))] });
             });
     }
 
