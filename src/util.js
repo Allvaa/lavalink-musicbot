@@ -1,7 +1,7 @@
 const { MessageEmbed, Permissions, MessageActionRow } = require("discord.js");
 const prettyMilliseconds = require("pretty-ms");
 
-module.exports = class Util {
+class Util {
     static embed() {
         return new MessageEmbed()
             .setColor("#99AAB5");
@@ -98,3 +98,5 @@ module.exports = class Util {
         };
     }
 };
+
+module.exports = Util;
