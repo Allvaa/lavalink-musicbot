@@ -35,7 +35,7 @@ module.exports = class MusicHandler {
     }
 
     get node() {
-        return this.client.shoukaku.nodes.get("main");
+        return this.client.shoukaku.getNode();
     }
 
     get volume() {
