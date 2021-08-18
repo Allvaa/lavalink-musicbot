@@ -1,8 +1,9 @@
 const { Intents } = require("discord.js");
+const { GUILDS, GUILD_MESSAGES, GUILD_VOICE_STATES } = Intents.FLAGS;
 const MusicClient = require("./structures/MusicClient");
 
 const client = new MusicClient({
-    intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES],
+    intents: [GUILDS, GUILD_MESSAGES, GUILD_VOICE_STATES],
     allowedMentions: {
         parse: ["users", "roles"]
     }
