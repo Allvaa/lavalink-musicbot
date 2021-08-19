@@ -69,8 +69,8 @@ class Util {
 
                 this.pagination(msg, author, contents, currPage);
             })
-            .on("end", () => {
-                msg.edit({ components: [new MessageActionRow().addComponents(...msg.components[0].components.map(x => x.setDisabled(true)))] });
+            .on("end", (_, reason) => {
+                if (['time', 'user'].includes(reason)) msg.edit({ components: [new MessageActionRow().addComponents(...msg.components[0].components.map(x => x.setDisabled(true)))] });
             });
     }
 
