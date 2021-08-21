@@ -23,7 +23,10 @@ module.exports = {
 
         try {
             music.queue.unshift(music.previous);
-            await music.skip();
+            music.skip();
+            ctx.respond({
+                embeds: [util.embed().setDescription("⏮️ | Previous")]
+            });
             ctx.react("⏮️").catch(e => e);
         } catch (e) {
             ctx.respond(`An error occured: ${e.message}.`);

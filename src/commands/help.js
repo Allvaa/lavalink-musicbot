@@ -15,6 +15,6 @@ module.exports = {
             .setDescription(commands.join(", "))
             .setTimestamp();
 
-        ctx.respond(embed);
+        ctx.respond({ embeds: [embed] });
     }
 };
