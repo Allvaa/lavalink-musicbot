@@ -64,7 +64,7 @@ module.exports = {
             });
 
             const selected = await awaitSelection();
-            if (!selected) return resultMessage.edit({ embeds: [util.embed().setDescription("❌ | Time is up!")] });
+            if (!selected) return resultMessage.edit({ embeds: [util.embed().setDescription("❌ | Time is up!")], components: [] });
             await selected.deferUpdate();
 
             if (selected.values[0] === "10")
