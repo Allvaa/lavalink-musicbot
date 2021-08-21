@@ -4,6 +4,7 @@ const durationPattern = /^[0-5]?[0-9](:[0-5][0-9]){1,2}$/;
 
 module.exports = {
     name: "seek",
+    description: "Seeks to specified timestamp",
     exec: async (ctx) => {
         const { music, args } = ctx;
         if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")] });

@@ -3,6 +3,7 @@ const util = require("../util");
 
 module.exports = {
     name: "stats",
+    description: "Check nodes stats",
     exec: (ctx) => {
         /** @type {import("lavacord").LavalinkNode[]} */
         const nodes = [...ctx.client.shoukaku.nodes.values()];

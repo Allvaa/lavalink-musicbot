@@ -1,6 +1,7 @@
 const util = require("../util");
 module.exports = {
     name: "8d",
+    description: "8D filter",
     aliases: ["rotation"],
     exec: async (ctx) => {
         const { music } = ctx;

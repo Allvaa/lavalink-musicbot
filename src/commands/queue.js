@@ -3,6 +3,7 @@ const util = require("../util");
 
 module.exports = {
     name: "queue",
+    description: "Queued track list",
     aliases: ["q"],
     exec: async (ctx) => {
         const { music } = ctx;

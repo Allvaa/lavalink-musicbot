@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "previous",
+    description: "Plays previous track",
     aliases: ["prev"],
     exec: async (ctx) => {
         const { music } = ctx;
@@ -25,7 +26,7 @@ module.exports = {
             music.queue.unshift(music.previous);
             music.skip();
             ctx.respond({
-                embeds: [util.embed().setDescription("⏮️ | Previous")]
+                embeds: [util.embed().setDescription("⏮️ | Previous track")]
             });
             ctx.react("⏮️").catch(e => e);
         } catch (e) {

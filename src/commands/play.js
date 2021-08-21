@@ -4,6 +4,7 @@ const getAttachmentURL = ctx => ctx.attachments.first()?.url;
 
 module.exports = {
     name: "play",
+    description: "Add song to queue and play it",
     aliases: ["p"],
     exec: async (ctx) => {
         const { args, music } = ctx;

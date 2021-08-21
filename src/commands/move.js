@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "move",
+    description: "Move track position in queue",
     aliases: ["mv"],
     exec: async (ctx) => {
         const { music, args } = ctx;

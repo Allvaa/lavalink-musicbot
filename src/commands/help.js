@@ -4,6 +4,7 @@ const unlisted = ["eval"];
 
 module.exports = {
     name: "help",
+    description: "List of commands",
     aliases: ["commands", "?"],
     exec: (ctx) => {
         const commands = ctx.client.commands

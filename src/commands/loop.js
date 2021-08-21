@@ -6,6 +6,7 @@ const modes = ["None", "Track", "Queue"];
 
 module.exports = {
     name: "loop",
+    description: "Show and set loop mode",
     aliases: ["repeat"],
     exec: async (ctx) => {
         const { music } = ctx;

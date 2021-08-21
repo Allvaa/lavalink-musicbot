@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "volume",
+    description: "Check and set volume",
     aliases: ["vol"],
     exec: async (ctx) => {
         const { music, args } = ctx;

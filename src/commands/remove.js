@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "remove",
+    description: "Remove track from queue",
     aliases: ["rm"],
     exec: async (ctx) => {
         const { music, args } = ctx;

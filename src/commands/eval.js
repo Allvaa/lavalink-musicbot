@@ -3,6 +3,7 @@ const { isValidURL } = require("../util");
 
 module.exports = {
     name: "eval",
+    description: "Evaluate JS code",
     aliases: ["e"],
     exec: async (ctx) => {
         if (ctx.author.id !== process.env.OWNER_ID) return;

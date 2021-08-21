@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "nowplaying",
+    description: "Check what music is playing",
     aliases: ["np", "nowplay"],
     exec: (ctx) => {
         const { music } = ctx;

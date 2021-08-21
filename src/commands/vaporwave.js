@@ -1,6 +1,7 @@
 const util = require("../util");
 module.exports = {
     name: "vaporwave",
+    description: "Vaporwave filter",
     aliases: ["vp"],
     exec: async (ctx) => {
         const { music } = ctx;

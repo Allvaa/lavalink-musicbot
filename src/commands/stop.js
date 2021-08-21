@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "stop",
+    description: "Stop the player",
     aliases: ["leave", "dc"],
     exec: (ctx) => {
         const { music } = ctx;

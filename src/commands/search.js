@@ -5,6 +5,7 @@ const emojiNumbers = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣
 
 module.exports = {
     name: "search",
+    description: "Search song to play",
     exec: async (ctx) => {
         const { music, args } = ctx;
         if (!ctx.member.voice.channel)

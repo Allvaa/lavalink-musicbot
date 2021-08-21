@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "shuffle",
+    description: "Shuffle the queue",
     aliases: ["sf"],
     exec: async (ctx) => {
         const { music } = ctx;

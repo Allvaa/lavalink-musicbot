@@ -1,6 +1,7 @@
 const util = require("../util");
 module.exports = {
     name: "doubletime",
+    description: "DT filter",
     aliases: ["dt"],
     exec: async (ctx) => {
         const { music } = ctx;

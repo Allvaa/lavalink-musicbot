@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "pause",
+    description: "Pause the player",
     exec: (ctx) => {
         const { music } = ctx;
         if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")] });

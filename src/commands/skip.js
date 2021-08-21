@@ -2,6 +2,7 @@ const util = require("../util");
 
 module.exports = {
     name: "skip",
+    description: "Skip current track",
     aliases: ["skipto"],
     exec: (ctx) => {
         const { music, args } = ctx;
