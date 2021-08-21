@@ -37,6 +37,6 @@ module.exports = class CommandContext {
     }
 
     respond(opt) {
-        return this.channel.send(opt);
+        return this.message.reply(opt);
     }
 };

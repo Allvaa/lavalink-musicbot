@@ -97,6 +97,6 @@ class Util {
             percent
         };
     }
-};
+}
 
 module.exports = Util;
