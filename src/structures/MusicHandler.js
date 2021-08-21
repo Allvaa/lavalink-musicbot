@@ -19,6 +19,7 @@ module.exports = class MusicHandler {
         /** @type {import("discord.js").TextChannel|null} */
         this.textChannel = null;
         this.shouldSkipCurrent = false;
+        this.state = null;
     }
 
     get voiceChannel() {
@@ -52,6 +53,7 @@ module.exports = class MusicHandler {
             this.filters[filter] = false;
         }
         this.bassboost = 0;
+        this.state = null;
     }
 
     /** @param {import("discord.js").VoiceChannel} voice */
@@ -86,6 +88,9 @@ module.exports = class MusicHandler {
                     return;
                 }
                 this.start();
+            })
+            .on("update", ({ state }) => {
+                this.state = state;
             })
             .on("error", console.error);
     }

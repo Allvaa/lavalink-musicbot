@@ -40,7 +40,7 @@ class Util {
         return ["◀", "⛔", "▶"];
     }
 
-    static async pagination(msg, author, contents, currPage = 0) {
+    static pagination(msg, author, contents, currPage = 0) {
         /** @type {import("discord.js").InteractionCollector} */
         const collector = msg.createMessageComponentCollector({
             filter: interaction => this.paginationEmojis.includes(interaction.customId) && interaction.user.id === author.id,
@@ -96,6 +96,21 @@ class Util {
             bar: progbar.join(""),
             percent
         };
+    }
+
+    static async awaitSelection(msg, filter) {
+        try {
+            const selected = await msg.awaitMessageComponent(
+                {   
+                    filter,
+                    time: 15000,
+                    componentType: "SELECT_MENU"
+                }
+            );
+            return selected;
+        } catch {
+            return null;
+        }
     }
 }
 

@@ -16,7 +16,7 @@ module.exports = {
         if ((!music.player || !music.player.playing) && missingPerms.length)
             return ctx.respond({ embeds: [util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`)] });
 
-        if (music.node.state !== 1)
+        if (music.node?.state !== 1)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")] });
 
         const query = args.join(" ");
@@ -63,7 +63,7 @@ module.exports = {
                 ]
             });
 
-            const selected = await awaitSelection();
+            const selected = await util.awaitSelection(resultMessage, interaction => interaction.user.equals(ctx.author));
             if (!selected) return resultMessage.edit({ embeds: [util.embed().setDescription("❌ | Time is up!")], components: [] });
             await selected.deferUpdate();
 
@@ -84,22 +84,6 @@ module.exports = {
             if (!music.player.playing) await music.start();
 
             music.setTextCh(ctx.channel);
-
-            // eslint-disable-next-line no-inner-declarations
-            async function awaitSelection() {
-                try {
-                    const selected = await resultMessage.awaitMessageComponent(
-                        {   
-                            filter: interaction => interaction.user.equals(ctx.author),
-                            time: 15000,
-                            componentType: "SELECT_MENU"
-                        }
-                    );
-                    return selected;
-                } catch {
-                    return null;
-                }
-            }
         } catch (e) {
             ctx.respond(`An error occured: ${e.message}.`);
         }
