@@ -27,7 +27,7 @@ module.exports = {
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | The duration you provide exceeds the duration of the current track.")] });
 
         try {
-            await music.player.seek(durationMs);
+            await music.player.seekTo(durationMs);
             ctx.respond({ embeds: [util.embed().setDescription(`✅ | Seeked to ${util.millisToDuration(durationMs)}.`)] });
         } catch (e) {
             ctx.respond(`An error occured: ${e.message}.`);
