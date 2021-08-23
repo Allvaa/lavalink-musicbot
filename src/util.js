@@ -65,7 +65,22 @@ class Util {
                     .setDescription(contents[currPage])
                     .setFooter(`Page ${currPage + 1} of ${contents.length}.`);
 
-                await interaction.editReply({ embeds: [embed] });
+                await interaction.editReply({ embeds: [embed],
+                    components:
+                        contents.length > 1
+                            ? [
+                                new MessageActionRow()
+                                    .addComponents(
+                                        ...this.paginationEmojis.map((x, i) =>
+                                            new MessageButton()
+                                                .setCustomId(x)
+                                                .setLabel(x)
+                                                .setStyle(i === 1 ? "DANGER" : "PRIMARY")
+                                        )
+                                    )
+                            ]
+                            : []
+                });;
 
                 this.pagination(msg, author, contents, currPage);
             })
