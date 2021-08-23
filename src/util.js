@@ -54,10 +54,7 @@ class Util {
                 await interaction.deferUpdate();
                 const emoji = interaction.customId;
                 if (emoji === this.paginationEmojis[0]) currPage--;
-                if (emoji === this.paginationEmojis[1]) {
-                    await interaction.editReply({ components: [new MessageActionRow().addComponents(...interaction.message.components[0].components.map(x => x.setDisabled(true)))] });
-                    return;
-                }
+                if (emoji === this.paginationEmojis[1]) return collector.stop();
                 if (emoji === this.paginationEmojis[2]) currPage++;
                 currPage = ((currPage % contents.length) + contents.length) % contents.length;
 
@@ -69,8 +66,13 @@ class Util {
 
                 this.pagination(msg, author, contents, currPage);
             })
-            .on("end", (_, reason) => {
-                if (['time', 'user'].includes(reason)) msg.edit({ components: [new MessageActionRow().addComponents(...msg.components[0].components.map(x => x.setDisabled(true)))] });
+            .on("end", (collected, reason) => {
+                if (reason === "time" || collected.first()?.customId === this.paginationEmojis[1]) msg.edit({
+                    components: [
+                        new MessageActionRow()
+                            .addComponents(...msg.components[0].components.map(x => x.setDisabled(true)))
+                    ]
+                });
             });
     }
 
