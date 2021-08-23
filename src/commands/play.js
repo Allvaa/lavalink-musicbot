@@ -39,7 +39,7 @@ module.exports = {
                 embeds: [util.embed().setDescription("❌ | Couldn't find any results.")]
             });
             
-            if (type === "PLAYLIST_LOADED") {
+            if (type === "PLAYLIST_LOADED" || type === "PLAYLIST") {
                 for (const track of tracks) {
                     track.requester = ctx.author;
                     music.queue.push(track);
