@@ -4,10 +4,20 @@ module.exports = {
     name: "move",
     description: "Move track position in queue",
     aliases: ["mv"],
+    options: {
+        from: {
+            description: "Number of the song to move",
+            type: "INTEGER",
+            required: true
+        },
+        to: {
+            description: "The new position",
+            type: "INTEGER",
+            required: true
+        }
+    },
     exec: async (ctx) => {
-        const { music, args } = ctx;
-        const from = args[0] ? parseInt(args[0], 10) : null;
-        const to = args[1] ? parseInt(args[1], 10) : null;
+        const { music, options: { from, to } } = ctx;
         if (!music.player?.track) return ctx.respond({
             embeds: [util.embed().setDescription("❌ | Currently not playing anything.")]
         });

@@ -1,13 +1,20 @@
 const util = require("../util");
 
-const getAttachmentURL = ctx => ctx.attachments.first()?.url;
+//const getAttachmentURL = ctx => ctx.attachments.first()?.url;
 
 module.exports = {
     name: "play",
-    description: "Add song to queue and play it",
+    description: "Adds song to queue and play it",
     aliases: ["p"],
+    options: {
+        query: {
+            description: "Song title/url",
+            type: "STRING",
+            required: true
+        }
+    },
     exec: async (ctx) => {
-        const { args, music } = ctx;
+        const { music, options: { query } } = ctx;
         if (!ctx.member.voice.channel)
             return ctx.respond({
                 embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")]
@@ -28,7 +35,6 @@ module.exports = {
                 embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")]
             });
 
-        const query = args.join(" ") || getAttachmentURL(ctx.message);
         if (!query) return ctx.respond({
             embeds: [util.embed().setDescription("❌ | Missing args.")]
         });
@@ -51,10 +57,9 @@ module.exports = {
                 const track = tracks[0];
                 track.requester = ctx.author;
                 music.queue.push(track);
-                if (music.player?.track)
-                    ctx.respond({
-                        embeds: [util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`)]
-                    });
+                ctx.respond({
+                    embeds: [util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`)]
+                });
             }
             if (!music.player) await music.join(ctx.member.voice.channel);
             if (!music.player.track) await music.start();

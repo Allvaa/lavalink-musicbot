@@ -114,6 +114,24 @@ class Util {
             return null;
         }
     }
+
+    static getOptionValue(option) {
+        if (["STRING", "INTEGER", "BOOLEAN", "NUMBER"].includes(option.type)) return option.value;
+        else if (option.type === "USER") return option.user ?? null;
+        else if (option.type === "MEMBER") return option.member ?? null;
+        else if (option.type === "ROLE") return option.role ?? null;
+        else return null;
+    }
+
+    static parseArg(guild, type, input) {
+        if (type === "STRING") return input;
+        else if (type === "BOOLEAN") return input === "true" ? true : input === "false" ? false : null;
+        else if (["INTEGER", "NUMBER"].includes(type)) return parseInt(input, 10);
+        else if (type === "USER") return guild.client.users.resolve(input) ?? null;
+        else if (type === "MEMBER") return guild.members.resolve(input) ?? null;
+        else if (type === "ROLE") return guild.roles.resolve(input) ?? null;
+        else return null;
+    }
 }
 
 module.exports = Util;
