@@ -40,37 +40,37 @@ class Util {
         return ["◀", "⛔", "▶"];
     }
 
-    static pagination(msg, author, contents, currPage = 0) {
+    static pagination(interaction, member, contents, currPage = 0) {
         /** @type {import("discord.js").InteractionCollector} */
-        const collector = msg.createMessageComponentCollector({
-            filter: interaction => this.paginationEmojis.includes(interaction.customId) && interaction.user.id === author.id,
+        const collector = interaction.channel.createMessageComponentCollector({
+            filter: interaction => this.paginationEmojis.includes(interaction.customId) && interaction.user.id === member.id,
             componentType: "BUTTON",
             max: 1,
             time: 15000
         });
 
         collector
-            .on("collect", async (interaction) => {
-                await interaction.deferUpdate();
-                const emoji = interaction.customId;
+            .on("collect", async (i) => {
+                await i.deferUpdate();
+                const emoji = i.customId;
                 if (emoji === this.paginationEmojis[0]) currPage--;
                 if (emoji === this.paginationEmojis[1]) return collector.stop();
                 if (emoji === this.paginationEmojis[2]) currPage++;
                 currPage = ((currPage % contents.length) + contents.length) % contents.length;
 
-                const embed = interaction.message.embeds[0]
+                const embed = i.message.embeds[0]
                     .setDescription(contents[currPage])
                     .setFooter(`Page ${currPage + 1} of ${contents.length}.`);
 
-                await interaction.editReply({ embeds: [embed] });
+                await i.editReply({ embeds: [embed] });
 
-                this.pagination(msg, author, contents, currPage);
+                this.pagination(interaction, member, contents, currPage);
             })
             .on("end", (collected, reason) => {
-                if (reason === "time" || collected.first()?.customId === this.paginationEmojis[1]) msg.edit({
+                if (reason === "time" || collected.first()?.customId === this.paginationEmojis[1]) interaction.edit({
                     components: [
                         new MessageActionRow()
-                            .addComponents(...msg.components[0].components.map(x => x.setDisabled(true)))
+                            .addComponents(...interaction.components[0].components.map(x => x.setDisabled(true)))
                     ]
                 });
             });
