@@ -3,8 +3,8 @@ const CommandContext = require("../structures/CommandContext");
 module.exports = {
     name: "messageCreate",
     exec: async (client, msg) => {
-        if (!msg.guild) return;
-        if (msg.author.bot) return;     
+        if (!msg.guild || msg.author.bot || msg.webhookId) return;
+        if (!msg.channel.permissionsFor(msg.guild.me).has('SEND_MESSAGES')) return;  
 
         const prefix = msg.content.toLowerCase().startsWith(client.prefix) ? client.prefix : `<@!${client.user.id}>`;
         if (!msg.content.toLowerCase().startsWith(prefix)) return;
