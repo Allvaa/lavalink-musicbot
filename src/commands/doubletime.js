@@ -5,7 +5,7 @@ module.exports = {
     aliases: ["dt"],
     exec: async (ctx) => {
         const { music } = ctx;
-        if (!music.player?.track) return ctx.respond({ embded: [util.embed().setDescription("❌ | Currently not playing anything.")]});
+        if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")]});
         if (!ctx.member.voice.channel)
             return ctx.respond({
                 embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")]
