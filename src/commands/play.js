@@ -34,11 +34,11 @@ module.exports = {
         });
 
         try {
-            const { type, playlistName, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
-            if (!tracks.length) return ctx.respond({
+               const result =  await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
+            if (!result || !result.tracks.length)  return ctx.respond({
                 embeds: [util.embed().setDescription("❌ | Couldn't find any results.")]
             });
-            
+            const { type, playlistName, tracks } = result;            
             if (type === "PLAYLIST_LOADED" || type === "PLAYLIST") {
                 for (const track of tracks) {
                     track.requester = ctx.author;
