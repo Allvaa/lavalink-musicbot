@@ -34,7 +34,7 @@ module.exports = {
         });
 
         try {
-               const result =  await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
+            const result =  await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
             if (!result || !result.tracks.length)  return ctx.respond({
                 embeds: [util.embed().setDescription("❌ | Couldn't find any results.")]
             });
