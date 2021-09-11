@@ -78,13 +78,16 @@ module.exports = class MusicHandler {
 
                 if (this.loop === 1 && !this.shouldSkipCurrent) this.queue.unshift(this.previous);
                 else if (this.loop === 2) this.queue.push(this.previous);
-
                 if (this.shouldSkipCurrent) this.shouldSkipCurrent = false;
-
                 if (!this.queue.length) {
-                    this.node.leaveChannel(this.guild.id);
-                    if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ | Queue is empty. Leaving voice channel..")]});
-                    this.reset();
+                    this.player.track = null;
+                    if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ | Queue is empty. Will Leave voice channel..")]});
+                    setTimeout(() => { 
+                            if (!this.queue.length && this.player && !this.player.track)  
+                               if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ | Nothing is Played. Leaving voice channel..")]});                                                     
+                            this.node.leaveChannel(this.guild.id); 
+                            this.reset();      
+                        }, 30000); 
                     return;
                 }
                 this.start();
