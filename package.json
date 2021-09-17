@@ -4,7 +4,8 @@
   "description": "Music bot that uses Lavalink for its audio player.",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "regscmd": "node scripts/registerslashcommand"
   },
   "repository": {
     "type": "git",

@@ -6,8 +6,15 @@ const emojiNumbers = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣
 module.exports = {
     name: "search",
     description: "Search song to play",
+    options: {
+        query: {
+            description: "Song title",
+            type: "STRING",
+            required: true
+        }
+    },
     exec: async (ctx) => {
-        const { music, args } = ctx;
+        const { music, options: { query } } = ctx;
         if (!ctx.member.voice.channel)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")] });
         if (ctx.guild.me.voice.channel && !ctx.guild.me.voice.channel.equals(ctx.member.voice.channel))
@@ -20,7 +27,6 @@ module.exports = {
         if (music.node?.state !== 1)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")] });
 
-        const query = args.join(" ");
         if (!query) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Missing args.")] });
 
         try {

@@ -5,11 +5,25 @@ module.exports = {
     name: "eval",
     description: "Evaluate JS code",
     aliases: ["e"],
+    options: {
+        code: {
+            description: "Code to eval",
+            type: "STRING",
+            required: true
+        },
+        async: {
+            description: "Async eval",
+            type: "BOOLEAN",
+        },
+        silent: {
+            description: "Dont send output",
+            type: "BOOLEAN",
+        }
+    },
     exec: async (ctx) => {
         if (ctx.author.id !== process.env.OWNER_ID) return;
-        const isAsync = ctx.args.includes("--async");
-        const isSilent = ctx.args.includes("--silent");
-        const code = ctx.args.filter(e => !/^--(async|silent)$/.test(e)).join(" ");
+        console.log(ctx.options);
+        const { code, async: isAsync, silent: isSilent } = ctx.options;
         try {
             let result = eval(isAsync ? `(async()=>{${code}})()` : code);
             let isResultPromise = false;

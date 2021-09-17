@@ -4,9 +4,14 @@ module.exports = {
     name: "volume",
     description: "Check and set volume",
     aliases: ["vol"],
+    options: {
+        newvolume: {
+            description: "New volume to set",
+            type: "INTEGER",
+        }
+    },
     exec: async (ctx) => {
-        const { music, args } = ctx;
-        const newVolume = parseInt(args[0], 10);
+        const { music, options: { newvolume: newVolume } } = ctx;
         if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")] });
         try {
             if (isNaN(newVolume)) {

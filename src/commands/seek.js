@@ -5,8 +5,15 @@ const durationPattern = /^[0-5]?[0-9](:[0-5][0-9]){1,2}$/;
 module.exports = {
     name: "seek",
     description: "Seeks to specified timestamp",
+    options: {
+        toduration: {
+            description: "Duration with format mm:ss",
+            type: "INTEGER",
+            required: true
+        }
+    },
     exec: async (ctx) => {
-        const { music, args } = ctx;
+        const { music, options: { toduration: toDuration } } = ctx;
         if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")] });
         if (!ctx.member.voice.channel)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")] });
@@ -16,13 +23,12 @@ module.exports = {
         if (!music.current.info.isSeekable)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | Current track isn't seekable.")] });
 
-        const duration = args[0];
-        if (!duration)
+        if (!toDuration)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | You must provide duration to seek. Valid duration e.g. `1:34`.")] });
-        if (!durationPattern.test(duration))
+        if (!durationPattern.test(toDuration))
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | You provided an invalid duration. Valid duration e.g. `1:34`.")] });
 
-        const durationMs = util.durationToMillis(duration);
+        const durationMs = util.durationToMillis(toDuration);
         if (durationMs > music.current.info.length)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | The duration you provide exceeds the duration of the current track.")] });
 

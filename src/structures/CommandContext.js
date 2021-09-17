@@ -1,30 +1,31 @@
+const { Message, CommandInteraction } = require("discord.js");
 const MusicHandler = require("./MusicHandler");
 
 module.exports = class CommandContext {
-    constructor(command, message, args) {
+    constructor(command, from, options) {
         this.command = command;
-        this.message = message;
-        this.args = args;
+        this.from = from;
+        this.options = options;
     }
 
     get client() {
-        return this.message.client;
+        return this.from.client;
     }
 
     get guild() {
-        return this.message.guild;
+        return this.from.guild;
     }
 
     get channel() {
-        return this.message.channel;
+        return this.from.channel;
     }
 
     get member() {
-        return this.message.member;
+        return this.from.member;
     }
 
     get author() {
-        return this.message.author;
+        return this.member.user;
     }
 
     get music() {
@@ -37,6 +38,7 @@ module.exports = class CommandContext {
     }
 
     respond(opt) {
-        return this.message.reply(opt);
+        if (this.from instanceof Message) return this.from.reply(opt);
+        else if (this.from instanceof CommandInteraction) return this.from.editReply(opt);
     }
 };

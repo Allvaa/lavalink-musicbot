@@ -3,8 +3,14 @@ module.exports = {
     name: "bassboost",
     description: "Set bassboost for player",
     aliases: ["bb"],
+    options: {
+        value: {
+            description: "Basboost value; 0 to disable",
+            type: "INTEGER",
+        }
+    },
     exec: async (ctx) => {
-        const { music, args } = ctx;
+        const { music, options } = ctx;
         if (!music.player?.track) return ctx.respond({
             embeds: [util.embed().setDescription("❌ | Currently not playing anything.")]
         });
@@ -17,16 +23,13 @@ module.exports = {
                 embeds: [util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`)]
             });
 
-        if (!args[0]) {
+        if (!options.value) {
             ctx.respond(util.embed().setDescription(`${music.filters.bassboost ? `✅ | BassBoost **${music.bassboost * 100}%**` : "❌ | BassBoost **off**"}`));
-        } else if (args[0].toLowerCase() == "off") {
-            music.setBassboost(0);
-            ctx.react("✅").catch(e => e);
         } else {
-            if (isNaN(args[0])) return ctx.respond(util.embed().setDescription("❌ | Specify a number"));
-            if (args[0] < 1 || args[0] > 100) return ctx.respond(util.embed().setDescription("❌ | You can only set the bassboost from 1 to 100."));
-            music.setBassboost(parseInt(args[0]));
-            ctx.respond(util.embed().setDescription(`✅ | BassBoost set to **${music.bassboost * 100}%**`));
+            if (isNaN(options.value)) return ctx.respond(util.embed().setDescription("❌ | Specify a number"));
+            if (options.value < 1 || options.value > 100) return ctx.respond(util.embed().setDescription("❌ | You can only set the bassboost from 1 to 100."));
+            music.setBassboost(parseInt(options.value));
+            ctx.respond(util.embed().setDescription(`✅ | BassBoost set to **${ music.bassboost ? "off" : `${music.bassboost * 100}%` }**`));
         }
     }
 };

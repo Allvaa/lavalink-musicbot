@@ -4,8 +4,15 @@ module.exports = {
     name: "remove",
     description: "Remove track from queue",
     aliases: ["rm"],
+    options: {
+        toremove: {
+            description: "Number of the song to remove",
+            type: "INTEGER",
+            required: true
+        }
+    },
     exec: async (ctx) => {
-        const { music, args } = ctx;
+        const { music, options: { toremove: toRemove } } = ctx;
         if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")] });
         if (!music.queue.length) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Queue is empty.")] });
 
@@ -14,9 +21,9 @@ module.exports = {
         if (ctx.guild.me.voice.channel && !ctx.guild.me.voice.channel.equals(ctx.member.voice.channel))
             return ctx.respond({ embeds: [util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`)] });
 
-        if (!args[0]) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Missing args.")] });
+        if (!toRemove) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Missing args.")] });
 
-        let iToRemove = parseInt(args[0], 10);
+        let iToRemove = parseInt(toRemove, 10);
         if (isNaN(iToRemove) || iToRemove < 1 || iToRemove > music.queue.length)
             return ctx.respond({ embeds: [util.embed().setDescription("❌ | Invalid number to remove.")] });
 
