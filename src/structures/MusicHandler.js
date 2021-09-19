@@ -89,9 +89,6 @@ module.exports = class MusicHandler {
                 }
                 this.start();
             })
-            .on("update", ({ state }) => {
-                this.state = state;
-            })
             .on("error", console.error);
     }
 
