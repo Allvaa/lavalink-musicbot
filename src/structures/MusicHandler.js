@@ -98,8 +98,8 @@ module.exports = class MusicHandler {
     }
 
     async load(query) {
-        const spotify = this.client.spotify.getNode(this.node.name);
-        if (this.client.spotify.isValidURL(query)) {
+        const spotify = this.client.spotify?.getNode(this.node.name);
+        if (this.client.spotify?.isValidURL(query)) {
             const { loadType: type, tracks, playlistInfo: { name } } = await spotify.load(query);
             return {
                 type,
