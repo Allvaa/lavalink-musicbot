@@ -18,15 +18,15 @@ module.exports = {
             });
 
         if (!args[0]) {
-            ctx.respond(util.embed().setDescription(`${music.filters.bassboost ? `✅ | BassBoost **${music.bassboost * 100}%**` : "❌ | BassBoost **off**"}`));
+            ctx.respond({embeds: [util.embed().setDescription(`${music.filters.bassboost ? `✅ | BassBoost **${music.bassboost * 100}%**` : "❌ | BassBoost **off**"}`)]});
         } else if (args[0].toLowerCase() == "off") {
             music.setBassboost(0);
-            ctx.react("✅").catch(e => e);
+            ctx.message.react("✅").catch(e => e);
         } else {
-            if (isNaN(args[0])) return ctx.respond(util.embed().setDescription("❌ | Specify a number"));
-            if (args[0] < 1 || args[0] > 100) return ctx.respond(util.embed().setDescription("❌ | You can only set the bassboost from 1 to 100."));
+            if (isNaN(args[0])) return ctx.respond({embeds: [util.embed().setDescription("❌ | Specify a number")]});
+            if (args[0] < 1 || args[0] > 100) return ctx.respond({embeds: [util.embed().setDescription("❌ | You can only set the bassboost from 1 to 100.")]});
             music.setBassboost(parseInt(args[0]));
-            ctx.respond(util.embed().setDescription(`✅ | BassBoost set to **${music.bassboost * 100}%**`));
+            ctx.respond({embeds: [util.embed().setDescription(`✅ | BassBoost set to **${music.bassboost * 100}%**`)]});
         }
     }
 };
