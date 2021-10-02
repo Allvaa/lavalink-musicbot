@@ -38,6 +38,7 @@ module.exports = class MusicClient extends Client {
             : null;
 
         this.prefix = process.env.PREFIX.toLowerCase();
+        this.timeout = 10; //timeout in second can use process.env also for storing it
     }
 
     build() {
