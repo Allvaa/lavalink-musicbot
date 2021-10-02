@@ -80,6 +80,7 @@ module.exports = class MusicHandler {
                 else if (this.loop === 2) this.queue.push(this.previous);
                 if (this.shouldSkipCurrent) this.shouldSkipCurrent = false;
                 if (!this.queue.length) {
+                    if (this.client.timeout) {
                     if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ | Queue is empty. Will Leave voice channel..")]});
                     setTimeout(() => { 
                             if (!this.queue.length && !this.current && this.player)  {
@@ -87,7 +88,12 @@ module.exports = class MusicHandler {
                             this.node.leaveChannel(this.guild.id); 
                             this.reset();  
                            } 
-                        }, 30000); 
+                        }, (this.client.timeout * 1000));
+                    }
+                    else {
+                          if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ |  Queue is empty. Leaving voice channel..")]});                                                     
+                            this.node.leaveChannel(this.guild.id); 
+                            this.reset();  
                     }
                     return;
                 }
