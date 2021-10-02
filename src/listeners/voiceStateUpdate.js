@@ -6,6 +6,7 @@ module.exports = {
             if (music.player.track) await music.stop();
             if (music.player) await music.node.leaveChannel(music.guild.id);
         }
+        if (oldState.channelId !== oldState.guild.me.voice.channelId || newState.channel) return;
           if (oldState.channel?.members.size === 1 && music?.player?.track ) {
                 setTimeout(() => { 
                     if (oldState.channel?.members.size === 1 && music?.player?.track) 	
