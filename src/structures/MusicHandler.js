@@ -69,13 +69,14 @@ module.exports = class MusicHandler {
         this.player
             .on("start", () => {
                 this.current = this.queue.shift();
-                if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`)]});
+                if (this.textChannel) {
+                    this.player.msg = this.textChannel.send({embeds:[util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`)]});}
             })
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
                 this.previous = this.current;
                 this.current = null;
-
+                if (!this.player.msg.deleted) this.player.msg.delete().catch(() => return null;);
                 if (this.loop === 1 && !this.shouldSkipCurrent) this.queue.unshift(this.previous);
                 else if (this.loop === 2) this.queue.push(this.previous);
 
