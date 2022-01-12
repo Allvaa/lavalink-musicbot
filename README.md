@@ -1,3 +1,9 @@
+archived now because im not interested anymore in developing/maintaining discord bots
+
+might be un-archived in the future
+
+thanks for those contibutors!
+
 # Lavalink-MusicBot
 Music bot that uses Lavalink for its audio player.
 
