@@ -1,76 +1,98 @@
+const { MessageActionRow, MessageSelectMenu } = require("discord.js");
 const util = require("../util");
+
+const emojiNumbers = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣","6️⃣","7️⃣","8️⃣","9️⃣","🔟"];
 
 module.exports = {
     name: "search",
-    exec: async (msg, args) => {
-        const { music } = msg.guild;
-        if (!msg.member.voice.channel)
-            return msg.channel.send(util.embed().setDescription("❌ | You must be on a voice channel."));
-        if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
-            return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
+    description: "Search song to play",
+    options: {
+        query: {
+            description: "Song title",
+            type: "STRING",
+            required: true
+        }
+    },
+    exec: async (ctx) => {
+        const { music, options: { query } } = ctx;
+        if (!ctx.member.voice.channel)
+            return ctx.respond({ embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")] });
+        if (ctx.guild.me.voice.channel && !ctx.guild.me.voice.channel.equals(ctx.member.voice.channel))
+            return ctx.respond({ embeds: [util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`)] });
 
-        const missingPerms = util.missingPerms(msg.guild.me.permissionsIn(msg.member.voice.channel), ["CONNECT", "SPEAK"]);
+        const missingPerms = util.missingPerms(ctx.guild.me.permissionsIn(ctx.member.voice.channel), ["CONNECT", "SPEAK"]);
         if ((!music.player || !music.player.playing) && missingPerms.length)
-            return msg.channel.send(util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`));
+            return ctx.respond({ embeds: [util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`)] });
 
-        if (!music.node || !music.node.connected)
-            return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
+        if (music.node?.state !== 1)
+            return ctx.respond({ embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")] });
 
-        const query = args.join(" ");
-        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
+        if (!query) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Missing args.")] });
 
         try {
             let { tracks } = await music.load(`ytsearch:${query}`);
-            if (!tracks.length) return msg.channel.send(util.embed().setDescription("❌ | Couldn't find any results."));
+            if (!tracks.length) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Couldn't find any results.")] });
 
             tracks = tracks.slice(0, 10);
 
-            const resultMessage = await msg.channel.send(util.embed()
-                .setAuthor("Search Result", msg.client.user.displayAvatarURL())
-                .setDescription(tracks.map((x, i) => `\`${++i}.\` **${x.info.title}**`))
-                .setFooter("Select from 1 to 10 or type \"cancel\" to cancel the command."));
+            const resultMessage = await ctx.respond({
+                embeds: [util.embed()
+                    .setAuthor("Song Selection", ctx.client.user.displayAvatarURL())
+                    .setDescription("Pick one of the search results that you would like to add to the queue")
+                    .setFooter("You can select \"cancel\" to cancel the command.")
+                ],
+                components: [
+                    new MessageActionRow()
+                        .addComponents(
+                            new MessageSelectMenu()
+                                .setCustomId("selected")
+                                .setPlaceholder("Nothing selected")
+                                .addOptions([
+                                    ...tracks
+                                        .map((x, i) => (
+                                            {
+                                                label: x.info.title,
+                                                description: x.info.author,
+                                                value: i.toString(),
+                                                emoji: emojiNumbers[i]
+                                            }
+                                        )),
+                                    ...[
+                                        {
+                                            label: "Cancel",
+                                            description: "Cancel selection",
+                                            value: "10",
+                                            emoji: "❌"
+                                        }
+                                    ]
+                                ])
+                        )
+                ]
+            });
 
-            const collector = await awaitMessages();
-            if (!collector) return resultMessage.edit(util.embed().setDescription("❌ | Time is up!"));
-            const response = collector.first();
+            const selected = await util.awaitSelection(resultMessage, interaction => interaction.user.equals(ctx.author));
+            if (!selected) return resultMessage.edit({ embeds: [util.embed().setDescription("❌ | Time is up!")], components: [] });
+            await selected.deferUpdate();
 
-            if (response.deletable) response.delete();
+            if (selected.values[0] === "10")
+                return selected.editReply({ embeds: [util.embed().setDescription("✅ | Cancelled.")], components: [] });
 
-            if (/^cancel$/i.exec(response.content))
-                return resultMessage.edit(util.embed().setDescription("✅ | Cancelled."));
-
-            const track = tracks[response.content - 1];
-            track.requester = msg.author;
+            const track = tracks[selected.values[0]];
+            track.requester = ctx.author;
             music.queue.push(track);
 
-            if (music.player && music.player.playing) {
-                resultMessage.edit(util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`));
+            if (music.player?.track) {
+                selected.editReply({ embeds: [util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`)], components: [] });
             } else {
-                resultMessage.delete();
+                selected.deleteReply();
             }
 
-            if (!music.player) await music.join(msg.member.voice.channel);
+            if (!music.player) await music.join(ctx.member.voice.channel);
             if (!music.player.playing) await music.start();
 
-            music.setTextCh(msg.channel);
+            music.setTextCh(ctx.channel);
         } catch (e) {
-            msg.channel.send(`An error occured: ${e.message}.`);
-        }
-
-        async function awaitMessages() {
-            try {
-                const collector = await msg.channel.awaitMessages(
-                    m => m.author.equals(msg.author) && (/^cancel$/i.exec(m.content) || (!isNaN(parseInt(m.content, 10)) && (m.content >= 1 && m.content <= 10))),
-                    {
-                        time: 10000,
-                        max: 1,
-                        errors: ["time"]
-                    }
-                );
-                return collector;
-            } catch {
-                return null;
-            }
+            ctx.respond(`An error occured: ${e.message}.`);
         }
     }
 };

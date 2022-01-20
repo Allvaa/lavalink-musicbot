@@ -1,22 +1,21 @@
-const { Manager } = require("@lavacord/discord.js");
 const { Client, Collection } = require("discord.js");
 const { promises: { readdir } } = require("fs");
 const { join } = require("path");
 const { LavasfyClient } = require("lavasfy");
-
-require("../extensions");
+const { Shoukaku, Libraries } = require("shoukaku");
 
 module.exports = class MusicClient extends Client {
     /** @param {import("discord.js").ClientOptions} [opt] */
     constructor(opt) {
         super(opt);
+        this.musics = new Collection();
         this.commands = new Collection();
-        this.manager = new Manager(this, [
+        this.shoukaku = new Shoukaku(new Libraries.DiscordJS(this), [
             {
-                id: "main",
-                host: process.env.LAVA_HOST,
-                port: process.env.LAVA_PORT,
-                password: process.env.LAVA_PASS
+                name: "main",
+                url: `${process.env.LAVA_HOST}:${process.env.LAVA_PORT}`,
+                auth: process.env.LAVA_PASS,
+                secure: process.env.LAVA_SECURE === "true"
             }
         ]);
         this.spotify = process.env.ENABLE_SPOTIFY === "true"
@@ -25,8 +24,17 @@ module.exports = class MusicClient extends Client {
                 clientSecret: process.env.SPOTIFY_SECRET,
                 playlistLoadLimit: process.env.SPOTIFY_PLAYLIST_PAGE_LIMIT,
                 audioOnlyResults: true,
-                useSpotifyMetadata: true
-            }, [...[...this.manager.nodes.values()]])
+                useSpotifyMetadata: true,
+                autoResolve: true
+            }, [
+                {
+                    id: "main",
+                    host: process.env.LAVA_HOST,
+                    port: process.env.LAVA_PORT,
+                    password: process.env.LAVA_PASS,
+                    secure: process.env.LAVA_SECURE === "true"
+                }
+            ])
             : null;
 
         this.prefix = process.env.PREFIX.toLowerCase();
@@ -37,11 +45,11 @@ module.exports = class MusicClient extends Client {
         this.loadEventListeners();
         this.login(process.env.TOKEN);
 
-        this.manager
-            .on("ready", node => console.log(`Node ${node.id} is ready!`))
-            .on("disconnect", (ws, node) => console.log(`Node ${node.id} disconnected.`))
-            .on("reconnecting", (node) => console.log(`Node ${node.id} tries to reconnect.`))
-            .on("error", (error, node) => console.log(`Node ${node.id} got an error: ${error.message}`));
+        this.shoukaku
+            .on("ready", (node, reconnect) => console.log(`Node ${node} is now ready.${reconnect ? " (reconnected)": ""}`))
+            .on("disconnect", node => console.log(`Node ${node} disconnected.`))
+            .on("close", (node, code, reason) => console.log(`Node ${node} closed. Code: ${code}. Reason: ${reason}.`))
+            .on("error", (node, error) => console.log(`Encountered an error in node ${node}.`, error));
     }
 
     /** @private */

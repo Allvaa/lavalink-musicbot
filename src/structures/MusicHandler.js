@@ -1,18 +1,25 @@
-const Rest = require("./Rest");
 const util = require("../util");
 
 module.exports = class MusicHandler {
     /** @param {import("discord.js").Guild} guild */
     constructor(guild) {
         this.guild = guild;
-        this.volume = 100;
         this.loop = 0; // 0 = none; 1 = track; 2 = queue;
         this.previous = null;
         this.current = null;
         this.queue = [];
+        this.filters = {
+            doubleTime: false,
+            nightcore: false,
+            vaporwave: false,
+            "8d": false,
+            bassboost: false
+        };
+        this.bassboost = 0;
         /** @type {import("discord.js").TextChannel|null} */
         this.textChannel = null;
         this.shouldSkipCurrent = false;
+        this.state = null;
     }
 
     get voiceChannel() {
@@ -25,35 +32,44 @@ module.exports = class MusicHandler {
     }
 
     get player() {
-        return this.client.manager.players.get(this.guild.id) || null;
+        return this.client.shoukaku.players.get(this.guild.id);
     }
 
     get node() {
-        return this.client.manager.nodes.get("main");
+        return this.client.shoukaku.getNode();
+    }
+
+    get volume() {
+        return this.player?.filters.volume * 100 ?? 100;
     }
 
     reset() {
         this.loop = 0;
-        this.volume = 100;
         this.previous = null;
         this.current = null;
         this.queue = [];
         this.textChannel = null;
+        for (const filter of Object.keys(this.filters)) {
+            this.filters[filter] = false;
+        }
+        this.bassboost = 0;
+        this.state = null;
     }
 
     /** @param {import("discord.js").VoiceChannel} voice */
     async join(voice) {
         if (this.player) return;
-        await this.client.manager.join({
-            channel: voice.id,
-            guild: this.guild.id,
-            node: this.node.id
-        }, { selfdeaf: true });
+        await this.node.joinChannel({
+            channelId: voice.id,
+            guildId: this.guild.id,
+            shardId: this.guild.shardId,
+            deaf: true
+        });
 
         this.player
             .on("start", () => {
                 this.current = this.queue.shift();
-                if (this.textChannel) this.textChannel.send(util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`));
+                if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription(`🎶 | Now playing **${this.current.info.title}**.`)]});
             })
             .on("end", (data) => {
                 if (data.reason === "REPLACED") return;
@@ -66,12 +82,15 @@ module.exports = class MusicHandler {
                 if (this.shouldSkipCurrent) this.shouldSkipCurrent = false;
 
                 if (!this.queue.length) {
-                    this.client.manager.leave(this.guild.id);
-                    if (this.textChannel) this.textChannel.send(util.embed().setDescription("✅ | Queue is empty. Leaving voice channel.."));
+                    this.node.leaveChannel(this.guild.id);
+                    if (this.textChannel) this.textChannel.send({embeds:[util.embed().setDescription("✅ | Queue is empty. Leaving voice channel..")]});
                     this.reset();
                     return;
                 }
                 this.start();
+            })
+            .on("update", ({ state }) => {
+                this.state = state;
             })
             .on("error", console.error);
     }
@@ -82,47 +101,89 @@ module.exports = class MusicHandler {
     }
 
     async load(query) {
-        const res = await Rest.load(this.node, query, this.client.spotify);
-        return res;
+        const spotify = this.client.spotify.getNode(this.node.name);
+        if (this.client.spotify.isValidURL(query)) {
+            const { loadType: type, tracks, playlistInfo: { name } } = await spotify.load(query);
+            return {
+                type,
+                tracks,
+                playlistName: name
+            };
+        }
+        return this.node.rest.resolve(query);
     }
 
-    async start() {
-        if (!this.player) return;
-        await this.player.play(this.queue[0].track);
+    start() {
+        this.player?.playTrack(this.queue[0].track);
     }
 
-    async pause() {
-        if (!this.player) return;
-        if (!this.player.paused) await this.player.pause(true);
+    pause() {
+        if (!this.player?.paused) this.player?.setPaused(true);
     }
 
-    async resume() {
-        if (!this.player) return;
-        if (this.player.paused) await this.player.pause(false);
+    resume() {
+        if (this.player?.paused) this.player?.setPaused(false);
     }
 
-    async skip(to = 1) {
-        if (!this.player) return;
+    skip(to = 1) {
         if (to > 1) {
             this.queue.unshift(this.queue[to - 1]);
             this.queue.splice(to, 1);
         }
         if (this.loop === 1 && this.queue[0]) this.shouldSkipCurrent = true;
-        await this.player.stop();
+        this.player?.stopTrack();
     }
 
-    async stop() {
-        if (!this.player) return;
+    stop() {
         this.loop = 0;
         this.queue = [];
-        await this.skip();
+        this.skip();
     }
 
-    async setVolume(newVol) {
+    setVolume(volume) {
+        this.player?.setVolume(volume / 100);
+    }
+
+    setDoubleTime(val) {
         if (!this.player) return;
-        const parsed = parseInt(newVol, 10);
-        if (isNaN(parsed)) return;
-        await this.player.volume(parsed);
-        this.volume = newVol;
+        this.filters.doubleTime = val;
+        if (val) {
+            this.filters.nightcore = false;
+            this.filters.vaporwave = false;
+        }
+        this.player.setTimescale(val ? { speed: 1.5 } : null);
+    }
+
+    setNightcore(val) {
+        if (!this.player) return;
+        this.filters.nightcore = val;
+        if (val) {
+            this.filters.doubleTime = false;
+            this.filters.vaporwave = false;
+        }
+        this.player.setTimescale(val ? { rate: 1.5 } : null);
+    }
+
+    setVaporwave(val) {
+        if (!this.player) return;
+        this.filters.vaporwave = val;
+        if (val) {
+            this.filters.doubleTime = false;
+            this.filters.nightcore = false;
+        }
+        this.player.setTimescale(val ? { pitch: 0.5 } : null);
+    }
+
+    set8D(val) {
+        if (!this.player) return;
+        this.filters["8d"] = val;
+        this.player.setRotation(val ? { rotationHz: 0.2 } : null);
+    }
+
+    setBassboost(val) {
+        if (!this.player) return;
+        this.filters.bassboost = !!val;
+        this.bassboost = val / 100;
+        this.player.setEqualizer(val ? Array(6).fill(0.22).map((x, i) => ({ band: i, gain: x * val })) : []);
     }
 };

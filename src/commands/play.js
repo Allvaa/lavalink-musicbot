@@ -1,51 +1,72 @@
 const util = require("../util");
 
-const getAttachmentURL = (msg) => (msg.attachments.first() || {}).url;
+//const getAttachmentURL = ctx => ctx.attachments.first()?.url;
 
 module.exports = {
     name: "play",
+    description: "Adds song to queue and play it",
     aliases: ["p"],
-    exec: async (msg, args) => {
-        const { music } = msg.guild;
-        if (!msg.member.voice.channel)
-            return msg.channel.send(util.embed().setDescription("❌ | You must be on a voice channel."));
-        if (msg.guild.me.voice.channel && !msg.guild.me.voice.channel.equals(msg.member.voice.channel))
-            return msg.channel.send(util.embed().setDescription(`❌ | You must be on ${msg.guild.me.voice.channel} to use this command.`));
+    options: {
+        query: {
+            description: "Song title/url",
+            type: "STRING",
+            required: true
+        }
+    },
+    exec: async (ctx) => {
+        const { music, options: { query } } = ctx;
+        if (!ctx.member.voice.channel)
+            return ctx.respond({
+                embeds: [util.embed().setDescription("❌ | You must be on a voice channel.")]
+            });
+        if (ctx.guild.me.voice.channel && !ctx.guild.me.voice.channel.equals(ctx.member.voice.channel))
+            return ctx.respond({
+                embeds: [util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`)]
+            });
 
-        const missingPerms = util.missingPerms(msg.guild.me.permissionsIn(msg.member.voice.channel), ["CONNECT", "SPEAK"]);
+        const missingPerms = util.missingPerms(ctx.guild.me.permissionsIn(ctx.member.voice.channel), ["CONNECT", "SPEAK"]);
         if ((!music.player || !music.player.playing) && missingPerms.length)
-            return msg.channel.send(util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`));
+            return ctx.respond({
+                embeds: [util.embed().setDescription(`❌ | I need ${missingPerms.length > 1 ? "these" : "this"} permission${missingPerms.length > 1 ? "s" : ""} on your voice channel: ${missingPerms.map(x => `\`${x}\``).join(", ")}.`)]
+            });
 
-        if (!music.node || !music.node.connected)
-            return msg.channel.send(util.embed().setDescription("❌ | Lavalink node not connected."));
+        if (music.node?.state !== 1)
+            return ctx.respond({
+                embeds: [util.embed().setDescription("❌ | Lavalink node is not connected yet.")]
+            });
 
-        const query = args.join(" ") || getAttachmentURL(msg);
-        if (!query) return msg.channel.send(util.embed().setDescription("❌ | Missing args."));
+        if (!query) return ctx.respond({
+            embeds: [util.embed().setDescription("❌ | Missing args.")]
+        });
 
         try {
-            const { loadType, playlistInfo: { name }, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
-            if (!tracks.length) return msg.channel.send(util.embed().setDescription("❌ | Couldn't find any results."));
+            const { type, playlistName, tracks } = await music.load(util.isValidURL(query) ? query : `ytsearch:${query}`);
+            if (!tracks.length) return ctx.respond({
+                embeds: [util.embed().setDescription("❌ | Couldn't find any results.")]
+            });
             
-            if (loadType === "PLAYLIST_LOADED") {
+            if (type === "PLAYLIST") {
                 for (const track of tracks) {
-                    track.requester = msg.author;
+                    track.requester = ctx.author;
                     music.queue.push(track);
                 }
-                msg.channel.send(util.embed().setDescription(`✅ | Loaded \`${tracks.length}\` tracks from **${name}**.`));
+                ctx.respond({
+                    embeds: [util.embed().setDescription(`✅ | Loaded \`${tracks.length}\` tracks from **${playlistName}**.`)]
+                });
             } else {
                 const track = tracks[0];
-                track.requester = msg.author;
+                track.requester = ctx.author;
                 music.queue.push(track);
-                if (music.player && music.player.playing)
-                    msg.channel.send(util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`));
+                ctx.respond({
+                    embeds: [util.embed().setDescription(`✅ | **${track.info.title}** added to the queue.`)]
+                });
             }
-            
-            if (!music.player) await music.join(msg.member.voice.channel);
-            if (!music.player.playing) await music.start();
+            if (!music.player) await music.join(ctx.member.voice.channel);
+            if (!music.player.track) await music.start();
 
-            music.setTextCh(msg.channel);
+            music.setTextCh(ctx.channel);
         } catch (e) {
-            msg.channel.send(`An error occured: ${e.message}.`);
+            ctx.respond(`An error occured: ${e.message}.`);
         }
     }
 };

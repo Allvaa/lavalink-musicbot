@@ -4,7 +4,8 @@
   "description": "Music bot that uses Lavalink for its audio player.",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "node .",
+    "regscmd": "node scripts/registerslashcommand"
   },
   "repository": {
     "type": "git",
@@ -17,13 +18,13 @@
   },
   "homepage": "https://github.com/Allvaa/lavalink-musicbot#readme",
   "dependencies": {
-    "@lavacord/discord.js": "0.0.7",
-    "discord.js": "^12.5.3",
+    "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
-    "lavasfy": "2.2.1",
-    "pretty-ms": "^7.0.1"
+    "lavasfy": "2.3.0",
+    "pretty-ms": "^7.0.1",
+    "shoukaku": "^2.0.0"
   },
   "devDependencies": {
-    "eslint": "^7.27.0"
+    "eslint": "^7.32.0"
   }
 }

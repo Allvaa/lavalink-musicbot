@@ -1,7 +1,7 @@
-const { MessageEmbed, Permissions } = require("discord.js");
+const { MessageEmbed, Permissions, MessageActionRow } = require("discord.js");
 const prettyMilliseconds = require("pretty-ms");
 
-module.exports = class Util {
+class Util {
     static embed() {
         return new MessageEmbed()
             .setColor("#99AAB5");
@@ -40,36 +40,39 @@ module.exports = class Util {
         return ["◀", "⛔", "▶"];
     }
 
-    static async pagination(msg, author, contents, init = true, currPage = 0) {
-        if (init) for (const emoji of this.paginationEmojis) await msg.react(emoji);
-
-        const collector = msg.createReactionCollector((reaction, user) => {
-            return this.paginationEmojis.includes(reaction.emoji.name) && user.id === author.id;
-        }, {
+    static pagination(interaction, member, contents, currPage = 0) {
+        /** @type {import("discord.js").InteractionCollector} */
+        const collector = interaction.channel.createMessageComponentCollector({
+            filter: interaction => this.paginationEmojis.includes(interaction.customId) && interaction.user.id === member.id,
+            componentType: "BUTTON",
             max: 1,
-            time: 30000
+            time: 15000
         });
 
         collector
-            .on("collect", (reaction) => {
-                reaction.users.remove(author);
-
-                const emoji = reaction.emoji.name;
+            .on("collect", async (i) => {
+                await i.deferUpdate();
+                const emoji = i.customId;
                 if (emoji === this.paginationEmojis[0]) currPage--;
                 if (emoji === this.paginationEmojis[1]) return collector.stop();
                 if (emoji === this.paginationEmojis[2]) currPage++;
                 currPage = ((currPage % contents.length) + contents.length) % contents.length;
 
-                const embed = msg.embeds[0]
+                const embed = i.message.embeds[0]
                     .setDescription(contents[currPage])
                     .setFooter(`Page ${currPage + 1} of ${contents.length}.`);
 
-                msg.edit(embed);
+                await i.editReply({ embeds: [embed] });
 
-                this.pagination(msg, author, contents, false, currPage);
+                this.pagination(interaction, member, contents, currPage);
             })
-            .on("end", (_, reason) => {
-                if (["time", "user"].includes(reason)) msg.reactions.removeAll();
+            .on("end", (collected, reason) => {
+                if (reason === "time" || collected.first()?.customId === this.paginationEmojis[1]) interaction.edit({
+                    components: [
+                        new MessageActionRow()
+                            .addComponents(...interaction.components[0].components.map(x => x.setDisabled(true)))
+                    ]
+                });
             });
     }
 
@@ -96,4 +99,39 @@ module.exports = class Util {
             percent
         };
     }
-};
+
+    static async awaitSelection(msg, filter) {
+        try {
+            const selected = await msg.awaitMessageComponent(
+                {   
+                    filter,
+                    time: 15000,
+                    componentType: "SELECT_MENU"
+                }
+            );
+            return selected;
+        } catch {
+            return null;
+        }
+    }
+
+    static getOptionValue(option) {
+        if (["STRING", "INTEGER", "BOOLEAN", "NUMBER"].includes(option.type)) return option.value;
+        else if (option.type === "USER") return option.user ?? null;
+        else if (option.type === "MEMBER") return option.member ?? null;
+        else if (option.type === "ROLE") return option.role ?? null;
+        else return null;
+    }
+
+    static parseArg(guild, type, input) {
+        if (type === "STRING") return input;
+        else if (type === "BOOLEAN") return input === "true" ? true : input === "false" ? false : null;
+        else if (["INTEGER", "NUMBER"].includes(type)) return parseInt(input, 10);
+        else if (type === "USER") return guild.client.users.resolve(input) ?? null;
+        else if (type === "MEMBER") return guild.members.resolve(input) ?? null;
+        else if (type === "ROLE") return guild.roles.resolve(input) ?? null;
+        else return null;
+    }
+}
+
+module.exports = Util;

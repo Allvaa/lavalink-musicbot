@@ -1,26 +1,44 @@
+const { MessageButton, MessageActionRow } = require("discord.js");
 const util = require("../util");
 
 module.exports = {
     name: "queue",
+    description: "Queued track list",
     aliases: ["q"],
-    exec: async (msg) => {
-        const { music } = msg.guild;
-        if (!music.player || !music.player.playing) return msg.channel.send(util.embed().setDescription("❌ | Currently not playing anything."));
-        if (!music.queue.length) return msg.channel.send(util.embed().setDescription("❌ | Queue is empty."));
+    exec: async (ctx) => {
+        const { music } = ctx;
+        if (!music.player?.track) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Currently not playing anything.")] });
+        if (!music.queue.length) return ctx.respond({ embeds: [util.embed().setDescription("❌ | Queue is empty.")] });
 
         const queue = music.queue.map((t, i) => `\`${++i}.\` **${t.info.title}** ${t.requester}`);
         const chunked = util.chunk(queue, 10).map(x => x.join("\n"));
 
         const embed = util.embed()
-            .setAuthor(`${msg.guild.name} Music Queue`, msg.guild.iconURL({ dynamic: true }))
+            .setAuthor(`${ctx.guild.name} Music Queue`, ctx.guild.iconURL({ dynamic: true }))
             .setDescription(chunked[0])
             .setFooter(`Page 1 of ${chunked.length}.`);
 
         try {
-            const queueMsg = await msg.channel.send(embed);
-            if (chunked.length > 1) await util.pagination(queueMsg, msg.author, chunked);
+            const queueMsg = await ctx.respond({
+                embeds: [embed],
+                components:
+                    chunked.length > 1
+                        ? [
+                            new MessageActionRow()
+                                .addComponents(
+                                    ...util.paginationEmojis.map((x, i) =>
+                                        new MessageButton()
+                                            .setCustomId(x)
+                                            .setEmoji(x)
+                                            .setStyle(i === 1 ? "DANGER" : "PRIMARY")
+                                    )
+                                )
+                        ]
+                        : []
+            });
+            if (chunked.length > 1) util.pagination(queueMsg, ctx.author, chunked);
         } catch (e) {
-            msg.channel.send(`An error occured: ${e.message}.`);
+            ctx.respond(`An error occured: ${e.message}.`);
         }
     }
 };

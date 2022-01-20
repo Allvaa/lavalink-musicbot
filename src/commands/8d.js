@@ -1,13 +1,12 @@
 const util = require("../util");
-
 module.exports = {
-    name: "clearqueue",
-    description:"Clean up the queue.",
-    aliases: ["clr", "clear"],
-    exec: (ctx) => {
+    name: "8d",
+    description: "8D filter",
+    aliases: ["rotation"],
+    exec: async (ctx) => {
         const { music } = ctx;
-        if (!music.queue.length) return ctx.respond({
-            embeds: [util.embed().setDescription("❌ | Queue is empty.")]
+        if (!music.player?.track) return ctx.respond({
+            embeds: [util.embed().setDescription("❌ | Currently not playing anything.")]
         });
         if (!ctx.member.voice.channel)
             return ctx.respond({
@@ -17,8 +16,10 @@ module.exports = {
             return ctx.respond({
                 embeds: [util.embed().setDescription(`❌ | You must be on ${ctx.guild.me.voice.channel} to use this command.`)]
             });
-            
-        music.queue.splice(0, 1);
-        ctx.respond(util.embed().setDescription("✅ | Cleared the queue.")).catch(e => e);
+      
+        music.set8D(!music.filters["8d"]);  
+        ctx.respond({
+            embeds: [util.embed().setDescription(`✅ | ${music.filters["8d"] ? "Enabled" : "Disabled"} **8D**`)]
+        });
     }
 };
